@@ -36,7 +36,7 @@ const BatchDetails = () => {
   const [isBatchDownloading, setIsBatchDownloading] = useState(false);
   const [editBatchId, setEditBatchId] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-
+  // New Change
   // Called by ActionMenu’s “Edit”
   const openEditModal = async (batchId) => {
     await handleViewBatch(batchId);  // Fetch and set the batch data
