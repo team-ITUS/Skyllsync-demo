@@ -1,0 +1,134 @@
+/* .dd-mm-yyyy-parent {
+  	position: relative;
+  	border-radius: 40px;
+  	border: 1px solid rgba(0, 0, 0, 0.2);
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 10px 20px;
+  	gap: 20px;
+  	text-align: left;
+  	font-size: 16px;
+  	color: rgba(0, 0, 0, 0.6);
+  	font-family: Jost;
+} */
+
+/* Hide the background of both dropdown panels and bump their font size */
+.my-calendar .react-datepicker__month-dropdown,
+.my-calendar .react-datepicker__year-dropdown {
+  background: transparent;
+  font-size: 1.25rem;   /* larger text */
+}
+
+/* Remove the default dropdown container background entirely */
+.my-calendar .react-datepicker__month-dropdown-container,
+.my-calendar .react-datepicker__year-dropdown-container {
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
+}
+
+/* Make the opened list half as tall */
+.my-calendar .react-datepicker__month-dropdown,
+.my-calendar .react-datepicker__year-dropdown {
+  max-height: 4rem;   /* adjust to taste—half of default */
+  overflow-y: auto;
+}
+
+/* Container and z‑index management */
+.react-datepicker-popper {
+  z-index: 1;
+  line-height: 0;
+}
+.react-datepicker-popper .react-datepicker__triangle {
+  stroke: #aeaeae;
+}
+.react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle {
+  fill: #f0f0f0;
+  color: #f0f0f0;
+}
+.react-datepicker-popper[data-placement^="top"] .react-datepicker__triangle {
+  fill: #fff;
+  color: #fff;
+}
+
+/* Main calendar shell */
+.react-datepicker {
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: 0.8rem;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #aeaeae;
+  border-radius: 0.3rem;
+  display: inline-block;
+  position: relative;
+  line-height: initial;
+}
+
+/* Header (month/year selectors) */
+.react-datepicker__header {
+  text-align: center;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #aeaeae;
+  border-top-left-radius: 0.3rem;
+  padding: 8px 0;
+  position: relative;
+}
+
+/* Layout of month grid */
+.react-datepicker__month-container {
+  float: left;
+}
+.react-datepicker__day-names {
+  white-space: nowrap;
+  margin-bottom: -8px;
+}
+.react-datepicker__day-name {
+  color: #000;
+  display: inline-block;
+  width: 1.7rem;
+  line-height: 1.7rem;
+  text-align: center;
+  margin: 0.166rem;
+}
+.react-datepicker__month {
+  margin: 0.4rem;
+  text-align: center;
+}
+.react-datepicker__week {
+  white-space: nowrap;
+}
+.react-datepicker__day {
+  cursor: pointer;
+  color: #000;
+  display: inline-block;
+  width: 1.7rem;
+  line-height: 1.7rem;
+  text-align: center;
+  margin: 0.166rem;
+}
+.react-datepicker__day--outside-month {
+  color: rgba(0,0,0,0.3);
+}
+.react-datepicker__day--weekend {
+  color: #d9534f;
+}
+.react-datepicker__day--today {
+  font-weight: bold;
+}
+
+/* Triangle “arrow” pointing at input */
+.react-datepicker__triangle {
+  position: absolute;
+  width: 18px;
+  height: 16px;
+  pointer-events: none;
+  left: 112px;    /* adjusted by JS, will reposition itself */
+  bottom: 100%;
+  transform: rotate(180deg) translateY(-1px);
+}
+.react-datepicker__aria-live {
+	display: none;
+}

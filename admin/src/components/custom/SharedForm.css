@@ -1,0 +1,75 @@
+label {
+  	align-self: stretch;
+  	position: relative;
+  	font-weight: 500;
+}
+.enter-batch-name {
+  	position: relative;
+}
+.enter-batch-name-wrapper {
+  	width: 388px;
+  	border-radius: 40px;
+  	border: 1px solid rgba(0, 0, 0, 0.2);
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: flex-start;
+  	padding: 10px 20px;
+  	color: rgba(0, 0, 0, 0.6);
+}
+
+.custom-date-input[type="select"], select.custom-date-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* Style select dropdown (option tray) */
+select.custom-date-input:focus {
+  outline: none;
+}
+
+select.custom-date-input option {
+  border-radius: 20px;
+  padding: 10px 20px;
+}
+
+/* Hide default file input button */
+input[type="file"].custom-date-input {
+  display: none;
+}
+
+.select-custom{
+	text-decoration: none;
+}
+.name-parent {
+  	width: auto;
+}
+.frame-wrapper {
+  	width: auto;
+}
+
+.dd-mm-yyyy-parent {
+  	width: auto;
+  	border-radius: 0px;
+	border: 0px solid rgba(0, 0, 0, 0.2);
+  	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	font-size: 16px;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 10px 20px;
+  	gap: 0px;
+  	color: rgba(0, 0, 0, 0.6);
+	height: 34px;
+}
+
+

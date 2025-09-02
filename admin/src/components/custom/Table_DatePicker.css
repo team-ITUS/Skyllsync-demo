@@ -1,0 +1,162 @@
+
+/* Hide the background of both dropdown panels and bump their font size */
+.my-calendar .react-datepicker__month-dropdown,
+.my-calendar .react-datepicker__year-dropdown {
+  background: transparent;
+  font-size: 1.25rem;   /* larger text */
+}
+
+/* Remove the default dropdown container background entirely */
+.my-calendar .react-datepicker__month-dropdown-container,
+.my-calendar .react-datepicker__year-dropdown-container {
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
+}
+
+/* Make the opened list half as tall */
+.my-calendar .react-datepicker__month-dropdown,
+.my-calendar .react-datepicker__year-dropdown {
+  max-height: 4rem;   /* adjust to taste—half of default */
+  overflow-y: auto;
+}
+
+.dd-mm-yyyy {
+  	position: relative;
+}
+.uiwdate-icon {
+  	width: 20px;
+  	position: relative;
+  	max-height: 100%;
+}
+/* Works for Chrome, Edge */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+/* Works for Firefox */
+input[type="date"]::-moz-focus-inner {
+  border: 0;
+}
+.custom-date-input{
+	text-decoration: none;
+  	border: none;
+  	outline: none;
+  	background: transparent;
+  	width: 100%;
+  	height: 100%;
+  	font-size: 16px;
+  	color: rgba(0, 0, 0, 0.6);
+}
+.dd-mm-yyyy-parent {
+  	position: relative;
+  	border-radius: 40px;
+	width: auto;
+  	border: 1px solid rgba(0, 0, 0, 0.2);
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 10px 20px;
+  	gap: 20px;
+  	text-align: left;
+  	font-size: 16px;
+  	color: rgba(0, 0, 0, 0.6);
+  	font-family: Jost;
+}
+
+.create-batch {
+  	position: relative;
+	font-weight: 500;
+}
+
+.tablerplus-icon {
+  	/* width: 16px; */
+  	position: relative;
+  	max-height: 100%;
+}
+.create-batch-parent {
+  	position: relative;
+  	border-radius: 40px;
+	width: fit-content;
+  	background-color: #374174;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 10px;
+  	box-sizing: border-box;
+  	gap: 10px;
+  	text-align: left;
+  	font-size: 16px;
+  	color: #fff;
+  	font-family: Jost;
+}
+
+.rounded-table-wrapper {
+  border: 1px solid rgba(235, 161, 53, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.custom-table {
+  margin-bottom: 0;
+}
+
+.custom-table th {
+  background-color: rgba(235, 161, 53, 0.20);
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.custom-table td {
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.create-batch-parent:hover {
+  cursor: pointer;
+  background-color: #414b7f;
+}
+
+.action-drawer {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  border-radius: 8px;
+  width: max-content;
+  animation: fadeInUp 0.2s ease-out;
+}
+
+.action-drawer div {
+  padding: 6px 15px;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.action-drawer div:hover {
+  background-color: rgba(235, 161, 53, 0.1);
+}
+
+	@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	}

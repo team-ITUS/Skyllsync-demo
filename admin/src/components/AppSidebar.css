@@ -1,0 +1,49 @@
+/* Remove dark‐mode hover/focus BG on all sidebar links */
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link:focus {
+  background: transparent !important;
+}
+
+/* Also clear the active background if you don’t want that either */
+.sidebar-nav .nav-link.active {
+  background: transparent !important;
+}
+
+/* .sidebar:not(.sidebar-end) ~ * {
+  --cui-sidebar-occupy-start: 16rem !important;
+} */
+
+.sidebar:not(.sidebar-end) ~ *.sidebar-collapsed {
+  --cui-sidebar-occupy-start: 60px !important;
+}
+
+.sidebar:not(.sidebar-end) ~ *.sidebar-expanded {
+  --cui-sidebar-occupy-start: 16rem !important;
+}
+
+/* Ensure sidebar icon images remain 35x35 even when collapsed */
+.nav-icon {
+  display: inline-flex;
+  width: 35px !important;
+  height: 35px !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon img, .nav-icon > svg, img.nav-icon {
+  width: 35px !important;
+  height: 35px !important;
+  object-fit: contain;
+}
+
+/* Increase specificity to beat CoreUI internal rules when collapsed */
+.sidebar .sidebar-nav .nav-link .nav-icon,
+.sidebar .sidebar-nav .nav-link .nav-icon img,
+.sidebar .sidebar-nav .nav-link img.nav-icon {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  flex: 0 0 35px !important;
+  line-height: 35px !important;
+}
+
