@@ -4575,3 +4575,140 @@
 [2025-09-02T05:57:01.937Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-02T05:57:04.948Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-02T05:57:06.338Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-02T06:47:06.415Z] [WARN] [logger.js:30] [Mongo] Environment variable urlDB is missing. Database operations will fail.
+[2025-09-02T06:48:38.148Z] [WARN] [logger.js:30] [Mongo] Environment variable urlDB is missing. Database operations will fail.
+[2025-09-02T06:49:08.613Z] [WARN] [logger.js:30] [Mongo] Environment variable urlDB is missing. Database operations will fail.
+[2025-09-02T06:49:33.155Z] [WARN] [logger.js:30] [Mongo] Environment variable urlDB is missing. Database operations will fail.
+[2025-09-02T06:50:44.280Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T06:50:44.284Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T06:50:44.287Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T06:50:48.465Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T06:50:48.468Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T06:50:48.470Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T06:52:22.359Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T06:52:22.360Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T06:52:22.362Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T06:57:49.373Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T06:57:49.375Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T06:57:49.376Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:05:25.162Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:05:25.162Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:05:25.163Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:08:21.436Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:08:21.438Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:08:21.440Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:09:35.171Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:09:35.173Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:09:35.175Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:09:41.224Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:09:41.226Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:09:41.227Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:09:54.756Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:09:54.759Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:09:54.760Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:10:12.559Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:10:12.561Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:10:12.563Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:10:43.982Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:10:43.984Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:10:43.985Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:11:19.833Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:11:19.833Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:11:19.834Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:12:34.295Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:12:34.295Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:12:34.296Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:19:30.322Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:19:30.324Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:19:30.325Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:19:56.358Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:19:56.358Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:19:56.359Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:20:08.056Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed:
+[2025-09-02T07:20:08.057Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed:
+[2025-09-02T07:20:08.057Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed:
+[2025-09-02T07:22:45.948Z] [WARN] [logger.js:30] [Mongo] Environment variable urlDB is missing. Database operations will fail.
+[2025-09-02T07:23:39.760Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:41.991Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:43.199Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:43.447Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:43.636Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:43.914Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:49.772Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:52.005Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:53.224Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:53.457Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:53.656Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:53.935Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:23:59.790Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:02.025Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:03.237Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:03.472Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:03.674Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:03.957Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:09.811Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:12.048Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:13.250Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:13.499Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:13.689Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:13.985Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:19.832Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:22.054Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:23.267Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:23.519Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:23.702Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:24.014Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:29.859Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:32.062Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:33.282Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:33.529Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:33.715Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:34.040Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:39.875Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:42.079Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:43.296Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:43.551Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:43.736Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:44.048Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:49.896Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:52.097Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:53.313Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:53.560Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:53.746Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:54.057Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:24:59.900Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:02.105Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:03.315Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:03.568Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:03.757Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:04.068Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:09.915Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:12.122Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:13.335Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:13.582Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:13.769Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:14.082Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:19.928Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:22.139Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:23.354Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:23.590Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:23.777Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:24.099Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:29.937Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:32.153Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:33.368Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:33.612Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:33.798Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:25:34.108Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:30:46.023Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Operation `admins.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:30:56.031Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Operation `accessors.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:31:06.038Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Operation `trainers.findOne()` buffering timed out after 10000ms"
+[2025-09-02T07:34:09.853Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-02T07:34:11.417Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-02T09:18:42.289Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-02T09:40:56.858Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-02T09:41:00.190Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-02T10:19:20.443Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-02T10:19:21.892Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-02T10:22:15.761Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-02T10:22:20.210Z] [INFO] [logger.js:38] [Mongo] Connected

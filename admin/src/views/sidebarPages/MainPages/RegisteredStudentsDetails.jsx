@@ -351,6 +351,45 @@ const RegisteredStudentsTable = () => {
     setCurrentPage(newPage)
   }
 
+   const downloadSinglePhoto = async (studentId) => {
+  try {
+    setIsDownloading(studentId); // show loading on that student
+
+    const response = await axios.get(
+      `${BASE_URL}/batch/downloadSinglePhoto/${studentId}`,
+      { responseType: 'blob' }
+    );
+
+    // try to extract filename from header
+    const disposition = response.headers['content-disposition'] || '';
+    let filename = `student_${studentId}_photo`;
+    const fileNameMatch = disposition.match(/filename\\*=UTF-8''(.+)|filename="(.+)"|filename=(.+)/i);
+    if (fileNameMatch) {
+      filename = decodeURIComponent(fileNameMatch[1] || fileNameMatch[2] || fileNameMatch[3]);
+    } else {
+      // fallback extension detection
+      const contentType = response.headers['content-type'] || '';
+      if (contentType.includes('jpeg')) filename += '.jpg';
+      else if (contentType.includes('png')) filename += '.png';
+      else filename += '.jpg';
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading photo:', error);
+    toast.error('Failed to download photo.');
+  } finally {
+    setIsDownloading(''); // stop loading
+  }
+};
+
   // Handle deletion of a student
   const handleDelete = async (studentId) => {
     const result = await MySwal.fire({
@@ -410,6 +449,15 @@ const RegisteredStudentsTable = () => {
       }
     } catch (error) {
       toast.error('Failed to fetch student details.')
+    }
+  }
+
+  // Open image in new tab when clicked in modal
+  const handleImageClick = (url) => {
+    try {
+      window.open(url, '_blank');
+    } catch (e) {
+      console.error('Failed to open image', e);
     }
   }
 
@@ -673,6 +721,12 @@ const RegisteredStudentsTable = () => {
                       <td className="position-relative" style={student.isProfile === "Rejected" ? { backgroundColor: '#ffeaea' } : {}}>
                         <ActionMenu
                           options={[
+                            {
+                              icon: 'Download_b.svg', // pick your icon file
+                              title: 'Download Photo',
+                              onClick: () => downloadSinglePhoto(student.studentId),
+                              isLoading: isDownloading === student.studentId,
+                            },
                             {
                               icon: 'material-symbols_edit-outline.svg',
                               title: 'View Detail',

@@ -14,6 +14,7 @@ const {
   patchProfileAcception,
   getBatchStudentPhotos,
   downloadBatchPhotos,
+  downloadSinglePhoto,
   uploadMultiPhotos,
   allCompleteProfile,
   cloneBatch,
@@ -39,6 +40,7 @@ batchRouter.put('/addNewStud',addNewStud);// add new student in existing batch.
 batchRouter.patch('/patchProfileAcception', patchProfileAcception);
 batchRouter.get('/getBatchStudentPhotos/:batchId', getBatchStudentPhotos);
 batchRouter.post('/downloadBatchPhotos', downloadBatchPhotos);
+batchRouter.get('/downloadSinglePhoto/:studentId', downloadSinglePhoto);
 // Clone batch
 batchRouter.post("/cloneBatch", cloneBatch);
 batchRouter.get("/getBatchNameById/:batchId", getBatchNameById);

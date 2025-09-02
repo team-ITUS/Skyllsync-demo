@@ -82,6 +82,64 @@ const BatchMembers = () => {
     }
   };
 
+  // const downloadSinglePhoto = async (studentId) => {
+  //   try {
+  //     const response = await axios.get(`${BASE_URL}/batch/downloadSinglePhoto/${studentId}`, {
+  //       responseType: 'blob', // Important
+  //     });
+
+  //     // Create a URL for the downloaded file
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', `student_${studentId}_photo.jpg`); // Specify the file name
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+  //   } catch (error) {
+  //     console.error('Error downloading photo:', error);
+  //     toast.error('Failed to download photo.');
+  //   }
+  // };
+  const downloadSinglePhoto = async (studentId) => {
+  try {
+    setIsDownloading(studentId); // show loading on that student
+
+    const response = await axios.get(
+      `${BASE_URL}/batch/downloadSinglePhoto/${studentId}`,
+      { responseType: 'blob' }
+    );
+
+    // try to extract filename from header
+    const disposition = response.headers['content-disposition'] || '';
+    let filename = `student_${studentId}_photo`;
+    const fileNameMatch = disposition.match(/filename\\*=UTF-8''(.+)|filename="(.+)"|filename=(.+)/i);
+    if (fileNameMatch) {
+      filename = decodeURIComponent(fileNameMatch[1] || fileNameMatch[2] || fileNameMatch[3]);
+    } else {
+      // fallback extension detection
+      const contentType = response.headers['content-type'] || '';
+      if (contentType.includes('jpeg')) filename += '.jpg';
+      else if (contentType.includes('png')) filename += '.png';
+      else filename += '.jpg';
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading photo:', error);
+    toast.error('Failed to download photo.');
+  } finally {
+    setIsDownloading(''); // stop loading
+  }
+};
+
   const handleExportAll = async () => {
     try {
       // 1️⃣ Fetch ALL students (override pagination by requesting a very large limit)
@@ -338,6 +396,8 @@ const BatchMembers = () => {
     fetchLinkCreateDate();
   }, [batchId]);
 
+  
+
   return (
     <div className="mainTableContainer">
       <div className="row">
@@ -410,6 +470,12 @@ const BatchMembers = () => {
                           //   onClick: () => dwnCertificate(stud.studentId, batchId, stud.name?.replace(/\s/g, '')),
                           //   isLoading: isDownloading === stud.studentId,
                           // },
+                          {
+                            icon: 'Download_b.svg', // pick your icon file
+                            title: 'Download Photo',
+                            onClick: () => downloadSinglePhoto(stud.studentId),
+                            isLoading: isDownloading === stud.studentId,
+                          },
                           ...(role === 'admin'
                             ? [
                               {

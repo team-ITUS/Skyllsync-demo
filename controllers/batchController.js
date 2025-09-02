@@ -809,6 +809,66 @@ const getLinkCreateDateById = async (req,res) =>{
   }
 };
 
+const downloadSinglePhoto = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    if (!studentId) {
+      return res.status(400).json({ message: "Student ID is required", success: false });
+    }
+
+    const student = await Studentmodel.findOne({ studentId });
+    if (!student || !student.imagePath) {
+      return res.status(404).json({ message: "Student not found or image not available", success: false });
+    }
+
+    let filePath = student.imagePath;
+
+    // If stored as absolute URL, convert to local path
+    if (typeof filePath === 'string' && filePath.startsWith('http')) {
+      try {
+        const url = new URL(filePath);
+        filePath = url.pathname; // e.g. /uploads/images/xxx.jpg
+        // remove leading slash if present when joining
+        if (filePath.startsWith('/')) filePath = filePath.slice(1);
+        filePath = path.join(__dirname, '..', filePath);
+      } catch (err) {
+        return res.status(400).json({ message: 'Invalid image URL stored for student', success: false });
+      }
+    } else {
+      // imagePath is likely a relative path like 'uploads/images/xxx.jpg' or just 'images/xxx.jpg'
+      if (filePath.startsWith('/')) filePath = filePath.slice(1);
+      filePath = path.join(__dirname, '..', filePath);
+    }
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'Image file not found on server', success: false });
+    }
+
+    const ext = path.extname(filePath) || '';
+    const safeName = (student.name || student.studentId || 'student').toString().replace(/\s+/g, '_');
+    const filename = `${safeName}${ext}`;
+
+    // Set headers to force download
+    const lowerExt = ext.toLowerCase();
+    let contentType = 'application/octet-stream';
+    if (['.jpg', '.jpeg'].includes(lowerExt)) contentType = 'image/jpeg';
+    else if (['.png'].includes(lowerExt)) contentType = 'image/png';
+    else if (['.gif'].includes(lowerExt)) contentType = 'image/gif';
+    else if (['.webp'].includes(lowerExt)) contentType = 'image/webp';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const readStream = fs.createReadStream(filePath);
+    readStream.on('error', (err) => {
+      return res.status(500).json({ message: 'Error reading image file', error: err.message, success: false });
+    });
+    readStream.pipe(res);
+  } catch (error) {
+    res.status(500).json({ message: error.message, success: false });
+  }
+};
+
 module.exports = {
   generateLink,
   createBatch,
@@ -824,6 +884,7 @@ module.exports = {
   patchProfileAcception,
   getBatchStudentPhotos,
   downloadBatchPhotos,
+  downloadSinglePhoto,
   uploadMultiPhotos,
   allCompleteProfile,
   cloneBatch,
