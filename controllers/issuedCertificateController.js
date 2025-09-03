@@ -439,49 +439,83 @@ const issueSingleCertificateById = async (req, res) => {
       return res.status(400).json({ message: 'batchId and studentId are required', success: false });
     }
 
-    // find the issued certificate doc for this batch
-    const issuedDoc = await IssuedCertificateModel.findOne({ batchId });
-    if (!issuedDoc) {
-      return res.status(404).json({ message: 'Issued certificate document for this batch not found', success: false });
-    }
-
-    // locate student entry within studList
-    const studIndex = issuedDoc.studList.findIndex(s => s.studentId === studentId);
-    if (studIndex === -1) {
-      return res.status(404).json({ message: 'Student not found in this batch', success: false });
-    }
-
     // ensure batch exists
     const batchExists = await BatchModel.findOne({ batchId });
     if (!batchExists) {
       return res.status(404).json({ message: 'Batch not found', success: false });
     }
 
-    // update fields
-    const updateFields = {};
-    // set issued true and issuedDate to batch endDate (if available) or now
-    updateFields[`studList.${studIndex}.issued`] = true;
-    updateFields[`studList.${studIndex}.issuedDate`] = batchExists.endDate || new Date();
-    if (grade !== undefined) {
-      updateFields[`studList.${studIndex}.grade`] = grade;
+    // find or create issued certificate document for this batch
+    let issuedDoc = await IssuedCertificateModel.findOne({ batchId });
+    const issuedDateValue = batchExists.endDate || new Date();
+
+    // If no document exists, create one and add the student as issued (atomic upsert)
+    if (!issuedDoc) {
+      const newEntry = {
+        studentId,
+        issued: true,
+        issuedDate: issuedDateValue,
+        grade: grade !== undefined ? grade : '',
+      };
+      const createdOrUpdated = await IssuedCertificateModel.findOneAndUpdate(
+        { batchId },
+        { $setOnInsert: { batchId }, $push: { studList: newEntry } },
+        { upsert: true, new: true }
+      );
+      return res.status(201).json({ message: 'Issued certificate document created and student added as issued', success: true, issuedDoc: createdOrUpdated });
     }
 
-    // perform atomic update on the document
-    const result = await IssuedCertificateModel.updateOne(
-      { batchId, 'studList.studentId': studentId },
-      { $set: updateFields }
+    // locate student entry within studList
+    const existing = issuedDoc.studList.find((s) => s.studentId === studentId);
+
+    // If student already exists in studList
+    if (existing) {
+      // If already issued, optionally update grade
+      if (existing.issued) {
+        if (grade !== undefined && existing.grade !== grade) {
+          const upd = await IssuedCertificateModel.updateOne(
+            { batchId, 'studList.studentId': studentId },
+            { $set: { 'studList.$.grade': grade } }
+          );
+          return res.status(200).json({ message: 'Student already issued; grade updated', success: true, modified: upd.modifiedCount > 0 });
+        }
+        return res.status(200).json({ message: 'Student already issued', success: true, modified: false });
+      }
+
+      // Student present but not issued yet -> mark issued
+      const updateFields = {
+        'studList.$.issued': true,
+        'studList.$.issuedDate': issuedDateValue,
+      };
+      if (grade !== undefined) updateFields['studList.$.grade'] = grade;
+
+      const result = await IssuedCertificateModel.updateOne(
+        { batchId, 'studList.studentId': studentId },
+        { $set: updateFields }
+      );
+
+      return res.status(200).json({ message: 'Student marked as issued', success: true, modified: result.modifiedCount > 0 });
+    }
+
+    // Student not found in studList -> push new entry with issued=true
+    const newEntry = {
+      studentId,
+      issued: true,
+      issuedDate: issuedDateValue,
+      grade: grade !== undefined ? grade : '',
+    };
+
+    // Use atomic push to append the student while preserving existing entries
+    const updatedDoc = await IssuedCertificateModel.findOneAndUpdate(
+      { batchId },
+      { $push: { studList: newEntry } },
+      { new: true }
     );
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ message: 'Fail to find student entry to update', success: false });
+    if (!updatedDoc) {
+      return res.status(500).json({ message: 'Failed to add student to issued certificate document', success: false });
     }
 
-    if (result.modifiedCount === 0) {
-      // no change (maybe already issued with same grade) — return success but indicate no modification
-      return res.status(200).json({ message: 'No changes required (student may already be issued)', success: true, modified: false });
-    }
-
-    return res.status(200).json({ message: 'Student marked as issued', success: true, modified: true });
+    return res.status(200).json({ message: 'Student added to issued list and marked as issued', success: true, issuedDoc: updatedDoc });
   } catch (err) {
     return res.status(500).json({ message: err.message, success: false });
   }

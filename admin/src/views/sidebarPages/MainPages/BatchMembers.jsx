@@ -41,6 +41,7 @@ const BatchMembers = () => {
 
   const [students, setStudents] = useState([])
   const [isDownloading, setIsDownloading] = useState('')
+  const [issuingStudent, setIssuingStudent] = useState('')
 
   //modal state
   const [searchTerm, setSearchTerm] = useState('')
@@ -260,6 +261,26 @@ const BatchMembers = () => {
     }
   }
 
+  // Issue single certificate for a student (admin)
+  const handleIssueSingle = async (studentId) => {
+    try {
+      setIssuingStudent(studentId);
+      const response = await axios.post(`${BASE_URL}/issuedCert/issueSingleCertificate/${batchId}/${studentId}`, {});
+      const respData = response.data;
+      if (respData?.success) {
+        toast.success(respData.message || 'Student issued successfully');
+        // refresh members list
+        getBatchMembers(currentPage);
+      } else {
+        toast.error(respData?.message || 'Failed to issue certificate');
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Server error while issuing certificate');
+    } finally {
+      setIssuingStudent('');
+    }
+  }
+
 
   //search student for add in batch
   const handleSearchChange = async (e) => {
@@ -470,6 +491,13 @@ const BatchMembers = () => {
                           //   onClick: () => dwnCertificate(stud.studentId, batchId, stud.name?.replace(/\s/g, '')),
                           //   isLoading: isDownloading === stud.studentId,
                           // },
+                          // Issue certificate (admin only)
+                          role === 'admin' && {
+                            icon: 'certificate_b.svg',
+                            title: 'Issue',
+                            onClick: () => handleIssueSingle(stud.studentId),
+                            isLoading: issuingStudent === stud.studentId,
+                          },
                           {
                             icon: 'Download_b.svg', // pick your icon file
                             title: 'Download Photo',
