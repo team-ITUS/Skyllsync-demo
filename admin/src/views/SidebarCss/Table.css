@@ -108,6 +108,7 @@
   background-color: #f7b267;
   border-top: 0px solid #dee2e6;
   border-top-left-radius: 20px;  
+  border-bottom-left-radius: 0;
   border-bottom: 15px solid #ffffff;
 }
 .table thead th:nth-child(2) {
@@ -138,6 +139,7 @@
   background-color: #3a4e7c;
   border-top: 0px solid #dee2e6;
   border-top-right-radius: 20px;  
+  border-bottom-right-radius: 0;
 }
 
 .table tbody tr{
@@ -157,7 +159,7 @@
   border-right: 0px solid #dee2e6;
   background-color: #ffe5d0;
   border-top: 0px solid #dee2e6;
-  border-top-left-radius: 20px;  
+  border-bottom-left-radius: 20px;  
   border-bottom: 10px solid #ffffff;
 }
 .table tbody td:nth-child(2){
@@ -174,7 +176,7 @@
   border-right: 0px solid #dee2e6;
   background-color: #e3e8f0;
   border-top: 0px solid #dee2e6;
-  border-top-right-radius: 20px;  
+  border-bottom-right-radius: 20px;  
   border-bottom: 10px solid #ffffff;
 }
 
