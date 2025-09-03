@@ -429,6 +429,65 @@ const deleteIssuedCertificateByBatch = async (req, res) => {
   }
 };
 
+// Issue a single certificate by batchId and studentId
+const issueSingleCertificateById = async (req, res) => {
+  try {
+    const { batchId, studentId } = req.params;
+    const { grade } = req.body; // optional grade parameter
+
+    if (!batchId || !studentId) {
+      return res.status(400).json({ message: 'batchId and studentId are required', success: false });
+    }
+
+    // find the issued certificate doc for this batch
+    const issuedDoc = await IssuedCertificateModel.findOne({ batchId });
+    if (!issuedDoc) {
+      return res.status(404).json({ message: 'Issued certificate document for this batch not found', success: false });
+    }
+
+    // locate student entry within studList
+    const studIndex = issuedDoc.studList.findIndex(s => s.studentId === studentId);
+    if (studIndex === -1) {
+      return res.status(404).json({ message: 'Student not found in this batch', success: false });
+    }
+
+    // ensure batch exists
+    const batchExists = await BatchModel.findOne({ batchId });
+    if (!batchExists) {
+      return res.status(404).json({ message: 'Batch not found', success: false });
+    }
+
+    // update fields
+    const updateFields = {};
+    // set issued true and issuedDate to batch endDate (if available) or now
+    updateFields[`studList.${studIndex}.issued`] = true;
+    updateFields[`studList.${studIndex}.issuedDate`] = batchExists.endDate || new Date();
+    if (grade !== undefined) {
+      updateFields[`studList.${studIndex}.grade`] = grade;
+    }
+
+    // perform atomic update on the document
+    const result = await IssuedCertificateModel.updateOne(
+      { batchId, 'studList.studentId': studentId },
+      { $set: updateFields }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Fail to find student entry to update', success: false });
+    }
+
+    if (result.modifiedCount === 0) {
+      // no change (maybe already issued with same grade) — return success but indicate no modification
+      return res.status(200).json({ message: 'No changes required (student may already be issued)', success: true, modified: false });
+    }
+
+    return res.status(200).json({ message: 'Student marked as issued', success: true, modified: true });
+  } catch (err) {
+    return res.status(500).json({ message: err.message, success: false });
+  }
+};
+
+
 module.exports = {
   getExaminDtlById,
   updateExaminById,
@@ -437,4 +496,5 @@ module.exports = {
   getExportableData,
   certIdIncrementor,
   deleteIssuedCertificateByBatch,
+  issueSingleCertificateById,
 };
