@@ -4826,3 +4826,8 @@
 [2025-09-03T10:26:30.694Z] [INFO] [logger.js:38] [Mongo] Connected
 [2025-09-03T10:32:15.233Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-03T10:32:17.887Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-03T11:38:16.271Z] [ERROR] [logger.js:34] Failed to generate certificate PDF: Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\Desktop\ITUS\ITUS_Demo\Skyllsync-demo\uploads\pdfs\file-1756452033420.pdf'
+[2025-09-03T11:39:07.348Z] [ERROR] [logger.js:34] Failed to generate certificate PDF: Error: ENOENT: no such file or directory, open 'C:\Users\Administrator\Desktop\ITUS\ITUS_Demo\Skyllsync-demo\uploads\pdfs\file-1756452033420.pdf'
+[2025-09-03T11:40:11.422Z] [INFO] [certificateController.js:480] fontPath is not set or falsy
+[2025-09-03T11:40:24.821Z] [ERROR] [logger.js:34] Failed to read image file "C:\Users\Administrator\Desktop\ITUS\ITUS_Demo\Skyllsync-demo\uploads\images\admin-ankit-wagh.png": ENOENT: no such file or directory, open 'C:\Users\Administrator\Desktop\ITUS\ITUS_Demo\Skyllsync-demo\uploads\images\admin-ankit-wagh.png'
+[2025-09-03T11:40:24.823Z] [ERROR] [logger.js:34] Failed to generate certificate PDF: Error: Required image file "C:\Users\Administrator\Desktop\ITUS\ITUS_Demo\Skyllsync-demo\uploads\images\admin-ankit-wagh.png" not found. Please upload the image or check the path.

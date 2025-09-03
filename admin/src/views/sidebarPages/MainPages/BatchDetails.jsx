@@ -288,6 +288,33 @@ const BatchDetails = () => {
     }
   }
 
+  // Prompt before assigning: Confirm assigns the batch and shows the examin list; Cancel does nothing
+  const handleAssignPrompt = async (batchId) => {
+    const result = await MySwal.fire({
+      title: 'Assign Batch?',
+      text: 'Do you want to assign this batch to the examiner now? (This will open the assign list after assigning.)',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Assign',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#374174', // Navy blue
+      cancelButtonColor: '#EBA135',  // Yellow
+      background: '#fefefe',
+      customClass: {
+        popup: 'custom-swal-popup',
+        confirmButton: 'swal-confirm-btn',
+        cancelButton: 'swal-cancel-btn',
+      }
+    });
+
+    if (!result.isConfirmed) return; // Cancelled – do nothing
+
+    // assign then open the examin list
+
+    // open the examin list regardless of assign success
+    examinStudent(batchId);
+  }
+
   //check issued or not
   const isIssuedCert = async (studentId, batchId) => {
     try {
@@ -805,7 +832,17 @@ const BatchDetails = () => {
                               role !== 'trainer' ? {
                                 title: 'Assign',
                                 icon: 'fluent_certificate-24-regular.svg',
-                                onClick: () => examinStudent(batch.batchId),
+                                onClick: () => {
+                                  // If all three statuses are Pending -> show confirm prompt; otherwise go straight to list
+                                  const byAdmin = (batch?.byAdmin || '').toString().toLowerCase();
+                                  const byExaminer = (batch?.byExaminer || '').toString().toLowerCase();
+                                  const byTrainer = (batch?.byTrainer || '').toString().toLowerCase();
+                                  if (byAdmin === 'pending' && byExaminer === 'pending' && byTrainer === 'pending') {
+                                    handleAssignPrompt(batch.batchId);
+                                  } else {
+                                    examinStudent(batch.batchId);
+                                  }
+                                },
                               } : null,
                               role === 'admin' && {
                                 title: 'Delete',
