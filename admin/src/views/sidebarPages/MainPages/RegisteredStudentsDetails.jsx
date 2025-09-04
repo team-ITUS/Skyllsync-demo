@@ -32,6 +32,7 @@ const RegisteredStudentsTable = () => {
   const [showModal, setShowModal] = useState(false) // Modal visibility state
   const [viewModal, setViewModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState(null)
+  const [enrolledBatches, setEnrolledBatches] = useState([])
   const limit = 50 // Set the number of items per page
   // State to manage edit mode and student data
   const [isEditMode, setIsEditMode] = useState(false)
@@ -606,13 +607,26 @@ const RegisteredStudentsTable = () => {
       const respData = response.data
 
       if (respData?.success) {
-        setSelectedStudent(respData?.studentDtl)
-        setViewModal(true)
+  setSelectedStudent(respData?.studentDtl)
+  // fetch enrolled batches for this student
+  fetchEnrolledBatches(studentId)
+  setViewModal(true)
       } else {
         toast.error(response.data?.message || 'Failed to fetch student details.')
       }
     } catch (error) {
       toast.error('Failed to fetch student details.')
+    }
+  }
+
+  // Fetch enrolled batch names for the student and store locally for rendering in modal
+  const fetchEnrolledBatches = async (studentId) => {
+    try {
+      const res = await axios.get(`${BASE_URL}/batch/getByStudent/${studentId}`)
+      const names = res?.data?.enrolledBatches || []
+      setEnrolledBatches(Array.isArray(names) ? names : [])
+    } catch (err) {
+      setEnrolledBatches([])
     }
   }
 
@@ -698,6 +712,7 @@ const RegisteredStudentsTable = () => {
   const handleCloseeModal = () => {
     setViewModal(false)
     setSelectedStudent(null) // Clear the selected student when modal is closed
+  setEnrolledBatches([])
   }
 
   // Re-upload photo handler
@@ -1170,6 +1185,22 @@ const RegisteredStudentsTable = () => {
                             accept="application/pdf, image/*"
                           />
                         </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Enrolled Batches */}
+                  <div className="col-12 px-4 pb-4">
+                    <label><strong>Enrolled Batches:</strong></label>
+                    <div style={{ marginTop: 6 }}>
+                      {enrolledBatches && enrolledBatches.length > 0 ? (
+                        enrolledBatches.map((bName, idx) => (
+                          <div key={idx} style={{ marginBottom: 6 }}>
+                            <strong>{bName}</strong>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ color: '#6c757d' }}>Not enrolled in any batch</div>
                       )}
                     </div>
                   </div>

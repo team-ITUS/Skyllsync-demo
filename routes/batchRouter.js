@@ -20,8 +20,10 @@ const {
   allCompleteProfile,
   cloneBatch,
   getBatchNameById,
-  getLinkCreateDateById
+  getLinkCreateDateById,
+  getBatchNamesByStudent
 } = require("../controllers/batchController");
+
 
 const batchRouter = express.Router();
 
@@ -50,4 +52,6 @@ batchRouter.get('/downloadSinglePhoto/:studentId', downloadSinglePhoto);
 batchRouter.post("/cloneBatch", cloneBatch);
 batchRouter.get("/getBatchNameById/:batchId", getBatchNameById);
 batchRouter.get("/getLinkCreateDateById/:batchId", getLinkCreateDateById);
+// Get all batch names a student is enrolled in
+batchRouter.get('/getByStudent/:studentId', getBatchNamesByStudent);
 module.exports = { batchRouter };

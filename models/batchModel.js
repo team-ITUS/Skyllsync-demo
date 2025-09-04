@@ -149,6 +149,14 @@ const Batch = new mongoose.Schema(
   }
 );
 
+// Static helper: get batch names where a given studentId is present in studentIds array
+Batch.statics.getBatchNamesByID = async function (studentId) {
+  if (!studentId) return [];
+  // exclude deleted batches
+  const batches = await this.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchName: 1 });
+  return batches.map((b) => b.batchName);
+};
+
 const BatchModel = mongoose.model("batchs", Batch);
 
 module.exports = { BatchModel };

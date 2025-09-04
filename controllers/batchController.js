@@ -1025,6 +1025,27 @@ const downloadSinglePhoto = async (req, res) => {
   }
 };
 
+// Return array of batch names where the provided studentId is enrolled
+const getBatchNamesByStudent = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    if (!studentId) {
+      return res.status(400).json({ success: false, message: 'studentId param is required' });
+    }
+    // Use model static helper if available
+    if (typeof BatchModel.getBatchNamesByID === 'function') {
+      const names = await BatchModel.getBatchNamesByID(studentId);
+      return res.status(200).json({ success: true, message: 'Batch names retrieved', enrolledBatches: names });
+    }
+    // Fallback: query batches containing studentId
+    const batches = await BatchModel.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchName: 1 });
+    const names = batches.map((b) => b.batchName);
+    return res.status(200).json({ success: true, message: 'Batch names retrieved', enrolledBatches: names });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, success: false });
+  }
+};
+
 module.exports = {
   generateLink,
   createBatch,
@@ -1046,5 +1067,6 @@ module.exports = {
   allCompleteProfile,
   cloneBatch,
   getBatchNameById,
-  getLinkCreateDateById
+  getLinkCreateDateById,
+  getBatchNamesByStudent
 };
