@@ -48,11 +48,27 @@ const RegisteredStudentsTable = () => {
   // Add these states at the top
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  // Student Filter state (for /student/filter-students)
+  const [showStudentFilter, setShowStudentFilter] = useState(false)
+  const [isFilteredMode, setIsFilteredMode] = useState(false)
+  const [studentFilter, setStudentFilter] = useState({
+    certificateId: '',
+    batchName: '',
+    courseName: '',
+    branchName: '',
+    startDate: null,
+    endDate: null,
+  })
   // Fetch registered students from the backend
   const fetchStudents = async (currentPage) => {
     try {
+      // When filters are active, delegate to filtered fetcher
+      if (isFilteredMode) {
+        await fetchFilteredStudents(currentPage)
+        return
+      }
       const response = await axios.get(`${BASE_URL}/student/getRegisteredStud`, {
-        params: { page: currentPage, limit, searchTerm, dateFrom, dateTo }, // Add dateFrom/dateTo
+        params: { page: currentPage, limit, searchTerm, dateFrom, dateTo },
       })
 
       const respData = response.data
@@ -71,6 +87,132 @@ const RegisteredStudentsTable = () => {
     }
   }
 
+  // Utilities for filter persistence
+  const saveFilterToStorage = (filters) => {
+    try {
+      const payload = {
+        ...filters,
+        // store as ISO date string (YYYY-MM-DD) or empty string
+        startDate: filters.startDate ? toISODate(filters.startDate) : '',
+        endDate: filters.endDate ? toISODate(filters.endDate) : '',
+      }
+  try { console.debug('[studentFilters] save ->', payload) } catch(e) {}
+  localStorage.setItem('studentFilters', JSON.stringify(payload))
+    } catch {}
+  }
+  const loadFilterFromStorage = () => {
+    try {
+      const raw = localStorage.getItem('studentFilters')
+  try { console.debug('[studentFilters] raw ->', raw) } catch(e) {}
+      if (!raw) return null
+      const parsed = JSON.parse(raw)
+  try { console.debug('[studentFilters] parsed ->', parsed) } catch(e) {}
+      // Defensive parsing: only convert non-empty strings to Date objects
+      const makeDate = (v) => {
+        if (!v) return null
+        try {
+          const d = new Date(v)
+          return isNaN(d.getTime()) ? null : d
+        } catch {
+          return null
+        }
+      }
+      return {
+        certificateId: parsed.certificateId || '',
+        batchName: parsed.batchName || '',
+        courseName: parsed.courseName || '',
+        branchName: parsed.branchName || '',
+        startDate: makeDate(parsed.startDate),
+        endDate: makeDate(parsed.endDate),
+      }
+    } catch {
+      return null
+    }
+  }
+  const clearFilterStorage = () => {
+    try { localStorage.removeItem('studentFilters') } catch {}
+  }
+
+  const hasAnyFilter = (f) => {
+    if (!f) return false
+    return Boolean(
+      (f.certificateId && f.certificateId.trim()) ||
+      (f.batchName && f.batchName.trim()) ||
+      (f.courseName && f.courseName.trim()) ||
+      (f.branchName && f.branchName.trim()) ||
+      f.startDate || f.endDate
+    )
+  }
+
+  const buildFilterParams = (pageVal) => {
+    const f = studentFilter
+    const params = { page: pageVal || 1, limit }
+    if (f.certificateId) params.certificateId = f.certificateId
+    if (f.batchName) params.batchName = f.batchName
+    if (f.courseName) params.courseName = f.courseName
+    if (f.branchName) params.branchName = f.branchName
+    if (f.startDate) params.startDate = toISODate(f.startDate)
+    if (f.endDate) params.endDate = toISODate(f.endDate)
+    return params
+  }
+
+  const fetchFilteredStudents = async (pageVal) => {
+    try {
+      setLoading(true)
+      const response = await axios.get(`${BASE_URL}/student/filter-students`, {
+        params: buildFilterParams(pageVal || currentPage),
+      })
+      const data = response.data
+      if (data?.success) {
+        const list = data.students || []
+        setStudents(list)
+        const total = Number(data.totalCount || 0)
+        setTotalPages(Math.max(1, Math.ceil(total / limit)))
+      } else {
+        toast.error(data?.message || 'No results found')
+        setStudents([])
+        setTotalPages(1)
+      }
+    } catch (err) {
+      setStudents([])
+      setTotalPages(1)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleApplyStudentFilter = () => {
+    const active = hasAnyFilter(studentFilter)
+    setIsFilteredMode(active)
+    setCurrentPage(1)
+    if (active) {
+      saveFilterToStorage(studentFilter)
+  try { console.debug('[studentFilters] applied ->', studentFilter) } catch(e) {}
+      fetchFilteredStudents(1)
+      toast.success('Filters applied')
+    } else {
+      clearFilterStorage()
+      fetchStudents(1)
+    }
+  // follow BatchDetails UX: hide the filter panel after applying filters
+  setShowStudentFilter(false)
+  }
+
+  const handleClearStudentFilter = () => {
+    setStudentFilter({
+      certificateId: '',
+      batchName: '',
+      courseName: '',
+      branchName: '',
+      startDate: null,
+      endDate: null,
+    })
+    setIsFilteredMode(false)
+    setCurrentPage(1)
+    clearFilterStorage()
+    fetchStudents(1)
+  }
+
   // Handle toggle between edit and save
   // Effect to initialize student data when selectedStudent changes
   useEffect(() => {
@@ -81,8 +223,30 @@ const RegisteredStudentsTable = () => {
 
 
   useEffect(() => {
+    // Load saved filters on first mount
+    const saved = loadFilterFromStorage()
+    if (saved && hasAnyFilter(saved)) {
+      setStudentFilter(saved)
+      setIsFilteredMode(true)
+  // restore filter panel visibility when saved filters exist
+  setShowStudentFilter(true)
+      setCurrentPage(1)
+      fetchFilteredStudents(1)
+      return
+    }
     fetchStudents(currentPage)
-  }, [currentPage, searchTerm, dateFrom, dateTo])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Re-fetch on deps change
+  useEffect(() => {
+    if (isFilteredMode) {
+      fetchFilteredStudents(currentPage)
+    } else {
+      fetchStudents(currentPage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchTerm, dateFrom, dateTo, isFilteredMode])
 
 
   const handleChangeStudent = (e) => {
@@ -529,9 +693,7 @@ const RegisteredStudentsTable = () => {
 
   //icon stylling end
 
-  useEffect(() => {
-    fetchStudents(currentPage)
-  }, [currentPage, searchTerm])
+  // removed duplicate fetch effect; unified above
 
   const handleCloseeModal = () => {
     setViewModal(false)
@@ -650,6 +812,13 @@ const RegisteredStudentsTable = () => {
 
         <div className="col-lg-4 mt-4 d-flex justify-content-end gap-2">
 
+          <CustomButton
+            title={showStudentFilter ? 'Hide Filters' : 'Filters'}
+            icon="Clone.svg"
+            variant='outline'
+            onClick={() => setShowStudentFilter((s) => !s)}
+          />
+
 
           <CustomButton
             title={
@@ -679,6 +848,61 @@ const RegisteredStudentsTable = () => {
           />
         </div>
       </div>
+
+      {showStudentFilter && (
+        <div className="row g-3 mb-3 p-3" style={{ background: '#f8f9fc', borderRadius: 8 }}>
+          <div className="col-md-3">
+            <InputField
+              label="Batch Name"
+              type="text"
+              value={studentFilter.batchName}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, batchName: val }))}
+            />
+          </div>
+          <div className="col-md-3">
+            <InputField
+              label="Course Name"
+              type="text"
+              value={studentFilter.courseName}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, courseName: val }))}
+            />
+          </div>
+          <div className="col-md-3">
+            <InputField
+              label="Branch Name"
+              type="text"
+              value={studentFilter.branchName}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, branchName: val }))}
+            />
+          </div>
+          <div className="col-md-3">
+            <InputField
+              label="Certificate ID"
+              type="text"
+              value={studentFilter.certificateId}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, certificateId: val }))}
+            />
+          </div>
+          <div className="col-md-3">
+            <Date_Picker
+              label="Batch Start"
+              value={studentFilter.startDate}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, startDate: val }))}
+            />
+          </div>
+          <div className="col-md-3">
+            <Date_Picker
+              label="Batch End"
+              value={studentFilter.endDate}
+              onChange={(val) => setStudentFilter((p) => ({ ...p, endDate: val }))}
+            />
+          </div>
+          <div className="col-md-6 d-flex justify-content-end align-items-end gap-2">
+            <CustomButton title="Clear" variant="outline" icon="crossmark.svg" onClick={handleClearStudentFilter} />
+            <CustomButton title="Apply" icon="Check.svg" onClick={handleApplyStudentFilter} />
+          </div>
+        </div>
+      )}
 
       <input
         type="file"

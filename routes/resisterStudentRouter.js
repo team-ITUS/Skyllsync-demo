@@ -16,6 +16,7 @@ const {
   updateStudById,
   downloadExcel,
   searchStudent,
+  filterStudents,
   studentByLink,
   reuploadProfilePhoto
 } = require("../controllers/resisterStudentController");
@@ -79,5 +80,7 @@ studentRouter.put(
 );
 
 studentRouter.get('/searchStudent',searchStudent);//search student
+// Student filter (reusable search service)
+studentRouter.get('/filter-students', filterStudents);
 
 module.exports = { studentRouter };

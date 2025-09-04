@@ -136,6 +136,13 @@ const getAllBatch = async (req, res) => {
       dateFrom,
       dateTo,
       statusFilter,
+      // new filter params
+      courseName,
+      batchName,
+      date,
+      certificateId,
+      branch,
+      studentName,
     } = req.query;
 
     const pageNumber = parseInt(page);
@@ -170,7 +177,28 @@ const getAllBatch = async (req, res) => {
       ];
     }
 
-    if (dateFrom && dateTo) {
+    // Apply explicit filters (AND semantics)
+    if (courseName) {
+      query.courseName = { $regex: courseName, $options: "i" };
+    }
+    if (batchName) {
+      query.batchName = { $regex: batchName, $options: "i" };
+    }
+    if (certificateId) {
+      query.certificateId = { $regex: certificateId, $options: "i" };
+    }
+    if (branch) {
+      query.branch = { $regex: branch, $options: "i" };
+    }
+
+    // date filter: if single date provided, match batches where startDate <= date <= endDate
+    if (date) {
+      const d = new Date(date);
+      if (!isNaN(d.getTime())) {
+        query.startDate = { $lte: d };
+        query.endDate = { $gte: d };
+      }
+    } else if (dateFrom && dateTo) {
       query.startDate = { $gte: new Date(dateFrom) };
       query.endDate = { $lte: new Date(dateTo) };
     }
@@ -181,6 +209,25 @@ const getAllBatch = async (req, res) => {
       query.status = "On-Going";
     } else if (statusFilter === "comingsoon") {
       query.status = "Coming Soon";
+    }
+
+    // If studentName filter is present, find matching studentIds first and add to query
+    if (studentName) {
+      try {
+        const matchingStudents = await Studentmodel.find(
+          { name: { $regex: studentName, $options: "i" } },
+          { studentId: 1 }
+        );
+        const studentIds = matchingStudents.map((s) => s.studentId);
+        if (studentIds.length === 0) {
+          // No students match - return empty result
+          return res.status(200).json({ allBatchDtl: [], currentPage: 1, totalPages: 0, totalBatches: 0, message: "No batch available", success: true });
+        }
+        // match batches that have any of these studentIds in their studentIds array
+        query.studentIds = { $in: studentIds };
+      } catch (err) {
+        console.error('Error searching students for studentName filter', err);
+      }
     }
 
     const allBatchDtl = await BatchModel.find(query)
@@ -207,6 +254,115 @@ const getAllBatch = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
+  }
+};
+
+/**
+ * searchBatches
+ * Accepts query params:
+ *  page, limit,
+ *  studentName, batchName, courseName, branch,
+ *  batchStart, batchEnd, certificateId
+ * Builds a dynamic AND query applying only provided filters.
+ * Supports pagination and returns appliedFilters metadata.
+ */
+const searchBatches = async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      studentName,
+      batchName,
+      courseName,
+      branch,
+      batchStart,
+      batchEnd,
+      certificateId,
+      role,
+      uuid,
+    } = req.query;
+
+    const pageNumber = Math.max(parseInt(page, 10) || 1, 1);
+    const limitNumber = Math.max(parseInt(limit, 10) || 10, 1);
+
+    const query = { deleteStatus: 'active' };
+
+    // role scoping (reuse existing logic)
+    if (role === 'accessor') {
+      if (!uuid) return res.status(400).json({ message: 'UUID is required for accessor role', success: false });
+      query.accessorId = uuid;
+    } else if (role === 'trainer') {
+      if (!uuid) return res.status(400).json({ message: 'UUID is required for trainer role', success: false });
+      query.trainerId = uuid;
+    }
+
+    const appliedFilters = {};
+
+    if (batchName) {
+      query.batchName = { $regex: batchName, $options: 'i' };
+      appliedFilters.batchName = batchName;
+    }
+    if (courseName) {
+      query.courseName = { $regex: courseName, $options: 'i' };
+      appliedFilters.courseName = courseName;
+    }
+    if (branch) {
+      query.branch = { $regex: branch, $options: 'i' };
+      appliedFilters.branch = branch;
+    }
+
+    // date range: overlap logic
+    if (batchStart || batchEnd) {
+      const start = batchStart ? new Date(batchStart) : null;
+      const end = batchEnd ? new Date(batchEnd) : null;
+      if (start && isNaN(start.getTime())) return res.status(400).json({ message: 'Invalid batchStart', success: false });
+      if (end && isNaN(end.getTime())) return res.status(400).json({ message: 'Invalid batchEnd', success: false });
+      // overlap: batch.startDate <= end && batch.endDate >= start
+      if (start && end) {
+        query.$and = query.$and || [];
+        query.$and.push({ startDate: { $lte: end } }, { endDate: { $gte: start } });
+        appliedFilters.batchStart = batchStart;
+        appliedFilters.batchEnd = batchEnd;
+      } else if (start) {
+        query.endDate = { $gte: start };
+        appliedFilters.batchStart = batchStart;
+      } else if (end) {
+        query.startDate = { $lte: end };
+        appliedFilters.batchEnd = batchEnd;
+      }
+    }
+
+    // studentName -> find studentIds
+    if (studentName) {
+      const students = await Studentmodel.find({ name: { $regex: studentName, $options: 'i' } }, { studentId: 1 });
+      const studentIds = students.map((s) => s.studentId);
+      if (!studentIds.length) {
+        return res.status(200).json({ items: [], allBatchDtl: [], totalItems: 0, totalBatches: 0, page: pageNumber, limit: limitNumber, appliedFilters: { studentName }, success: true });
+      }
+      // batches that contain any of these studentIds
+      query.studentIds = { $in: studentIds };
+      appliedFilters.studentName = studentName;
+    }
+
+    // certificateId -> find batches via IssuedCertificateModel entries
+    if (certificateId) {
+      const issued = await IssuedCertificateModel.find({ 'studList.certificateId': { $regex: certificateId, $options: 'i' } }, { batchId: 1 });
+      const batchIds = issued.map((i) => i.batchId).filter(Boolean);
+      if (!batchIds.length) {
+        return res.status(200).json({ items: [], allBatchDtl: [], totalItems: 0, totalBatches: 0, page: pageNumber, limit: limitNumber, appliedFilters: { certificateId }, success: true });
+      }
+      query.batchId = { $in: batchIds };
+      appliedFilters.certificateId = certificateId;
+    }
+
+    // execute query with pagination
+    const totalItems = await BatchModel.countDocuments(query);
+    const items = await BatchModel.find(query).sort({ updatedAt: -1 }).skip((pageNumber - 1) * limitNumber).limit(limitNumber);
+
+  return res.status(200).json({ items, allBatchDtl: items, totalItems, totalBatches: totalItems, page: pageNumber, limit: limitNumber, totalPages: Math.ceil(totalItems / limitNumber), appliedFilters, success: true });
+  } catch (err) {
+    console.error('searchBatches error', err);
+    return res.status(500).json({ message: err.message, success: false });
   }
 };
 
@@ -873,6 +1029,7 @@ module.exports = {
   generateLink,
   createBatch,
   getAllBatch,
+  searchBatches,
   deleteBatchById,
   getBatchById,
   updateBatchById,

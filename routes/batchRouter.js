@@ -3,6 +3,7 @@ const {
   generateLink,
   createBatch,
   getAllBatch,
+  searchBatches,
   deleteBatchById,
   getBatchById,
   updateBatchById,
@@ -29,6 +30,10 @@ batchRouter.put('/:batchId/all-complete-profile', allCompleteProfile);
 batchRouter.post("/generate", generateLink); // create enrolled students batch
 batchRouter.post("/createBatch", createBatch); // create enrolled students batch
 batchRouter.get("/getAllBatch", getAllBatch); //get all batch details(list)
+// Support frontend filter queries. Example: GET /batch/search?courseName=React&branch=Delhi&studentName=li
+batchRouter.get("/search", searchBatches); // search with query params
+// Also allow root GET to support calls to /batch?courseName=...
+batchRouter.get("/", getAllBatch);
 batchRouter.delete("/deleteBatchById/:batchId", deleteBatchById); //delete batch by batchId
 batchRouter.get("/getBatchById/:batchId", getBatchById); //get single batch by batchId
 batchRouter.put("/updateBatchById/:batchId", updateBatchById); //update batch by batchId

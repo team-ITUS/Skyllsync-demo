@@ -10,6 +10,7 @@ const BatchShareToken = require("../models/batchShareTokenModel");
 const { deleteFile } = require("../services/fileUploadService");
 const { log, warn, error, info } = require('../utils/logger');
 const { isFileAccessible } = require("../utils/validateUploadedFile");
+const { searchStudents } = require("../services/searchService");
 
 // Check if Email Exists
 exports.checkEmail = async (req, res) => {
@@ -955,6 +956,54 @@ exports.searchStudent = async (req, res) => {
       message: "Successfully get students.",
       success: true,
       data: students,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, success: false });
+  }
+};
+
+// Student Filter using reusable Search Service
+// GET via query params: certificateId, batchName, courseName, branchName, startDate, endDate, page, limit, sortBy, sortOrder
+exports.filterStudents = async (req, res) => {
+  try {
+    const {
+      certificateId,
+      batchName,
+      courseName,
+      branchName,
+      startDate,
+      endDate,
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    } = req.query;
+
+    const filters = {};
+    if (certificateId) filters.certificateId = String(certificateId);
+    if (batchName) filters.batchName = String(batchName);
+    if (courseName) filters.courseName = String(courseName);
+    if (branchName) filters.branchName = String(branchName);
+    if (startDate) filters.startDate = String(startDate);
+    if (endDate) filters.endDate = String(endDate);
+
+    const options = {
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      sortBy,
+      sortOrder,
+    };
+
+    const result = await searchStudents(filters, options);
+
+    return res.status(200).json({
+      message: "Successfully filtered students",
+      success: true,
+      students: result.items,
+      totalCount: result.totalCount,
+      page: result.page,
+      limit: result.limit,
+      appliedFilters: result.appliedFilters,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });

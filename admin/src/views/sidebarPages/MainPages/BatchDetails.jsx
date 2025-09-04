@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Modal, Button, Form, Col, Row, Spinner } from 'react-bootstrap'
 import { FaPencilAlt, FaEye, FaCheckCircle, FaIdCard } from 'react-icons/fa'
 import { MdCancel } from 'react-icons/md'
@@ -88,6 +88,15 @@ const BatchDetails = () => {
 
   const [branches, setBranches] = useState([])
   const [selectedBranch, setSelectedBranch] = useState('')
+
+  // Filter persistence
+  const FILTER_STORAGE_KEY = 'batch_filters_v1'
+  const [formFilters, setFormFilters] = useState({ courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' })
+  // Inline filter controls (toggled by Filter button)
+  const [showInlineFilter, setShowInlineFilter] = useState(false)
+  const [inlineFilters, setInlineFilters] = useState({ ...formFilters })
+  const [allBatches, setAllBatches] = useState([]) // master copy for client-side filtering
+  const [appliedFilters, setAppliedFilters] = useState(null)
 
   const [validity, setValidity] = useState('')
 
@@ -386,7 +395,7 @@ const BatchDetails = () => {
       // Revoke the object URL to free memory
       window.URL.revokeObjectURL(url)
     } catch (error) {
-      setError(error?.response?.data?.message || 'Internal server error. Tyr after some time.')
+      toast.error(error?.response?.data?.message || 'Internal server error. Try after some time.')
     } finally {
       setIsDownloading('')
     }
@@ -525,7 +534,8 @@ const BatchDetails = () => {
   // Get batch details
   const getBatchDtl = async (currentPage) => {
     try {
-      const response = await axios.get(`${BASE_URL}/batch/getAllBatch`, {
+      // When called without filters, fetch all batches via getAllBatch; when filters are provided, backend will handle them
+      const response = await axios.get(`${BASE_URL}/batch`, {
         params: {
           page: currentPage,
           limit,
@@ -541,14 +551,135 @@ const BatchDetails = () => {
 
       if (respData?.success) {
         setBatch(respData?.allBatchDtl)
+        setAllBatches(respData?.allBatchDtl || [])
         setTotalPages(respData?.totalPages)
+        return respData?.allBatchDtl || []
       } else {
         toast.error(respData.message || 'No batch available')
+        return []
       }
     } catch (error) {
       setBatch([])
       setTotalPages(1)
+      return []
     }
+  }
+
+  // Filter handlers
+  const handleApplyFilters = async (filters) => {
+    const toApply = filters || formFilters
+    try { localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(toApply)) } catch (err) {}
+    setAppliedFilters(toApply)
+    setFormFilters(toApply)
+  // modal removed: no-op
+    // Fetch filtered data from backend
+    try {
+      const response = await axios.get(`${BASE_URL}/batch/search`, { params: { ...toApply, page: currentPage, limit, role, uuid } })
+      const respData = response.data
+      if (respData?.success) {
+        setBatch(respData.allBatchDtl || [])
+        setAllBatches(respData.allBatchDtl || [])
+        setTotalPages(respData.totalPages || 1)
+      } else {
+        setBatch(respData.allBatchDtl || [])
+        setAllBatches(respData.allBatchDtl || [])
+        setTotalPages(respData.totalPages || 1)
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch filtered batches')
+    }
+  }
+
+  // Inline filter helpers
+  const setInlineField = (key, value) => setInlineFilters((p) => ({ ...p, [key]: value }))
+
+  const handleApplyInlineFilters = async () => {
+    // persist and delegate to existing apply handler
+    try {
+      await handleApplyFilters(inlineFilters)
+      setShowInlineFilter(false)
+    } catch (err) {
+      // handled in handleApplyFilters
+    }
+  }
+
+  const handleClearInlineFilters = async () => {
+    try { localStorage.removeItem(FILTER_STORAGE_KEY) } catch (err) {}
+    const empty = { courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' }
+    setInlineFilters(empty)
+    setFormFilters(empty)
+    setAppliedFilters(null)
+    // refresh main list
+    try {
+      const data = await getBatchDtl(currentPage)
+      setBatch(data || [])
+      setAllBatches(data || [])
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  const handleResetFilters = async () => {
+    try { localStorage.removeItem(FILTER_STORAGE_KEY) } catch (err) {}
+  const empty = { courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' }
+    setFormFilters(empty)
+    setAppliedFilters(null)
+  // modal removed: no-op
+    // Fetch all batches again
+    try {
+      const data = await getBatchDtl(currentPage)
+      setBatch(data || [])
+      setAllBatches(data || [])
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  // Apply filters (AND semantics) to an array of batches
+  const applyFiltersToData = (data = [], filters = {}) => {
+    if (!data || data.length === 0) return []
+  const { courseName, batchName, studentName, certificateId, branch } = filters || {}
+    return data.filter((b) => {
+      // Course Name
+      if (courseName && !String(b.courseName || '').toLowerCase().includes(courseName.toLowerCase())) return false
+      // Batch Name
+      if (batchName && !String(b.batchName || '').toLowerCase().includes(batchName.toLowerCase())) return false
+      // Certificate ID - try multiple possible fields
+      if (certificateId) {
+        const certFields = [b.certificateId, b.issuedCertificateId, b?.certificateId, b?.issuedCertId]
+        const found = certFields.some((f) => f && String(f).toLowerCase().includes(certificateId.toLowerCase()))
+        if (!found) return false
+      }
+      // Branch - check branchName or branchId
+      if (branch) {
+        const branchName = (b.branchName || b.branch || b.branchId || '').toString().toLowerCase()
+        if (!branchName.includes(branch.toLowerCase())) return false
+      }
+
+      // Student name matching (partial, case-insensitive)
+      if (studentName) {
+        const s = studentName.toLowerCase()
+        let matched = false
+        if (b.studentNames && typeof b.studentNames === 'string') {
+          if (b.studentNames.toLowerCase().includes(s)) matched = true
+        }
+        if (!matched && Array.isArray(b.students)) {
+          for (const st of b.students) {
+            const nm = (st?.studentName || st?.name || '').toString().toLowerCase()
+            if (nm && nm.includes(s)) { matched = true; break }
+          }
+        }
+        if (!matched && Array.isArray(b.studentList)) {
+          for (const st of b.studentList) {
+            const nm = (st?.studentName || st?.name || '').toString().toLowerCase()
+            if (nm && nm.includes(s)) { matched = true; break }
+          }
+        }
+        if (!matched) return false
+      }
+
+      return true
+    })
   }
 
   //fetch examin table details
@@ -644,7 +775,23 @@ const BatchDetails = () => {
 
 
   useEffect(() => {
-    getBatchDtl(currentPage)
+    const load = async () => {
+    const data = await getBatchDtl(currentPage)
+      // try to apply saved filters after batches are loaded
+      try {
+        const saved = localStorage.getItem(FILTER_STORAGE_KEY)
+        if (saved) {
+            const parsed = JSON.parse(saved)
+            setFormFilters(parsed)
+            setAppliedFilters(parsed)
+            setBatch(applyFiltersToData(data || [], parsed))
+            setInlineFilters(parsed)
+          }
+      } catch (err) {
+        // ignore
+      }
+    }
+    load()
   }, [currentPage, dateFrom, dateTo, searchName])
 
   const generateShareLink = async (batchId) => {
@@ -774,10 +921,34 @@ const BatchDetails = () => {
               </div>
               <div className="col-lg-5 mt-4 d-flex align-items-end justify-content-end">
                 <div className='d-flex justify-content-end' style={{ width: "100%" }}>
-                  <CustomButton title='Create Batch' icon="tabler_plus.svg" onClick={() => navigate("/create-batch")} />
+                    <div className="d-flex gap-2">
+                        <CustomButton
+                          title={showInlineFilter ? 'Hide Filters' : 'Filters'}
+                          icon="Clone.svg"
+                          variant='outline'
+                          onClick={() => setShowInlineFilter((s) => !s)}
+                        />
+                        <CustomButton title='Create Batch' icon="tabler_plus.svg" onClick={() => navigate("/create-batch")} />
+                    </div>
                 </div>
               </div>
             </div>
+            {/* Inline filter area - toggled by Filter button */}
+            {showInlineFilter && (
+              <div className="row mb-3">
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Course" value={inlineFilters.courseName} onChange={(v) => setInlineField('courseName', v)} placeholder="Course" /></div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Batch" value={inlineFilters.batchName} onChange={(v) => setInlineField('batchName', v)} placeholder="Batch" /></div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Student" value={inlineFilters.studentName} onChange={(v) => setInlineField('studentName', v)} placeholder="Student name" /></div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Certificate ID" value={inlineFilters.certificateId} onChange={(v) => setInlineField('certificateId', v)} placeholder="Cert ID" /></div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Branch" value={inlineFilters.branch} onChange={(v) => setInlineField('branch', v)} placeholder="Branch" /></div>
+                <div className="col-lg-2 col-md-12 d-flex align-items-end px-2">
+                  <div className="d-flex gap-2 flex-wrap justify-content-end" style={{ width: '100%' }}>
+                    <CustomButton title='Apply' icon="Check.svg" onClick={handleApplyInlineFilters} />
+                    <CustomButton title='Clear' variant='outline' onClick={handleClearInlineFilters} />
+                  </div>
+                </div>
+              </div>
+            )}
             <div className='table-responsive mt-4'>
               <table className="table inner-table-container table-bordered table-hover align-middle text-center custom-table accessor-table">
                 <thead>
@@ -1178,6 +1349,8 @@ const BatchDetails = () => {
             <CustomButton icon="Edit_Pencil_w.svg" title="Update" onClick={handleCertIdIncrementor} disabled={certIdLoading} />
           </Modal.Footer>
         </Modal>
+  {/* Filter Modal */}
+  {/* Filter modal removed */}
       </div>
 
 
