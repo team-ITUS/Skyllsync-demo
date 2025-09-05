@@ -13,14 +13,15 @@ const CustomInput = forwardRef(({
   fontWeight
 }, ref) => (
   <div className="dd-mm-yyyy-parent position-relative" style={{ padding: 0 }}>
-    <input
+      <input
       ref={ref}
       value={value || ''}
       onClick={onClick}
       placeholder={placeholder}
       style={{
         width: '100%',
-        padding: '10px 40px 10px 20px',
+        // reduce right padding slightly so smaller icon still fits comfortably
+        padding: '10px 36px 10px 20px',
         borderRadius: '40px',
         border: 'none',
         outline: 'none',
@@ -39,10 +40,10 @@ const CustomInput = forwardRef(({
       style={{
         position: 'absolute',
         top: '50%',
-        right: '15px',
+        right: '18px',
         transform: 'translateY(-50%)',
-        width: '20px',
-        height: '20px',
+        width: '16px',
+        height: '16px',
         cursor: 'pointer',
         pointerEvents: 'none'
       }}
