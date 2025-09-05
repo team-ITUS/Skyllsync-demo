@@ -63,6 +63,74 @@ const RegisteredStudentsTable = () => {
     startDate: null,
     endDate: null,
   })
+  // Dropdown option state for filters
+  const [batchOptions, setBatchOptions] = useState([])
+  const [courseOptions, setCourseOptions] = useState([])
+  const [branchOptions, setBranchOptions] = useState([])
+  const [isFilterMetaLoading, setIsFilterMetaLoading] = useState(false)
+
+  // Fetch selectable lists (batches, courses, branches) once when filter panel first opens or if previously persisted value exists
+  const loadFilterMeta = async () => {
+    if (isFilterMetaLoading) return
+    setIsFilterMetaLoading(true)
+    try {
+      // Fetch with higher limit to populate full dropdown lists
+      const reqs = [
+        axios.get(`${BASE_URL}/batch/getAllBatch`, { params: { page: 1, limit: 1000 } }).catch(() => ({ data: {} })),
+        axios.get(`${BASE_URL}/course/getAllCourses`).catch(() => ({ data: {} })),
+        axios.get(`${BASE_URL}/branch/getAllBranches`).catch(() => ({ data: {} })),
+      ]
+      const [bRes, cRes, brRes] = await Promise.all(reqs)
+
+      // Batches
+      // Actual controller returns allBatchDtl array
+      const bList = bRes?.data?.allBatchDtl || bRes?.data?.batchList || bRes?.data?.batches || bRes?.data?.data || bRes?.data?.batch || []
+      if (Array.isArray(bList)) {
+        const opts = [...new Set(bList.map(b => (b.batchName || b.name || '').trim()).filter(Boolean))]
+          .sort((a, b) => a.localeCompare(b))
+          .map(v => ({ label: v, value: v }))
+        setBatchOptions([{ label: 'All', value: '' }, ...opts])
+      }
+
+      // Courses
+      const cList = cRes?.data?.coursesList || []
+      if (Array.isArray(cList)) {
+        const opts = [...new Set(cList.map(c => (c.courseName || '').trim()).filter(Boolean))]
+          .sort((a, b) => a.localeCompare(b))
+          .map(v => ({ label: v, value: v }))
+        setCourseOptions([{ label: 'All', value: '' }, ...opts])
+      }
+
+      // Branches
+      const brList = brRes?.data?.branchesList || []
+      if (Array.isArray(brList)) {
+        const opts = [...new Set(brList.map(br => (br.branchName || '').trim()).filter(Boolean))]
+          .sort((a, b) => a.localeCompare(b))
+          .map(v => ({ label: v, value: v }))
+        setBranchOptions([{ label: 'All', value: '' }, ...opts])
+      }
+    } catch (e) {
+      // Silent fail; dropdowns will remain empty text fallback
+    } finally {
+      setIsFilterMetaLoading(false)
+    }
+  }
+
+  // When panel opens, load metadata if not already loaded
+  useEffect(() => {
+    if (showStudentFilter && (batchOptions.length === 0 || courseOptions.length === 0 || branchOptions.length === 0)) {
+      loadFilterMeta()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showStudentFilter])
+
+  // Also attempt loading once on mount if any persisted value exists (so dropdown shows it)
+  useEffect(() => {
+    if (hasAnyFilter(studentFilter)) {
+      loadFilterMeta()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   // Track the last applied filter signature to avoid redundant applies
   const lastAppliedKeyRef = useRef('')
   const autoApplyDebounceRef = useRef(null)
@@ -1065,25 +1133,34 @@ const buildSearchFromFilters = (filters, pageVal) => {
           <div className="col-md-3">
             <InputField
               label="Batch Name"
-              type="text"
+              type="select"
+              hidePlaceholder
               value={studentFilter.batchName}
               onChange={(val) => setStudentFilter((p) => ({ ...p, batchName: val }))}
+              options={batchOptions}
+              loading={isFilterMetaLoading}
             />
           </div>
           <div className="col-md-3">
             <InputField
               label="Course Name"
-              type="text"
+              type="select"
+              hidePlaceholder
               value={studentFilter.courseName}
               onChange={(val) => setStudentFilter((p) => ({ ...p, courseName: val }))}
+              options={courseOptions}
+              loading={isFilterMetaLoading}
             />
           </div>
           <div className="col-md-3">
             <InputField
               label="Branch Name"
-              type="text"
+              type="select"
+              hidePlaceholder
               value={studentFilter.branchName}
               onChange={(val) => setStudentFilter((p) => ({ ...p, branchName: val }))}
+              options={branchOptions}
+              loading={isFilterMetaLoading}
             />
           </div>
           <div className="col-md-3">

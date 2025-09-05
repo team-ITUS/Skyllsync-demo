@@ -153,8 +153,9 @@ const Batch = new mongoose.Schema(
 Batch.statics.getBatchNamesByID = async function (studentId) {
   if (!studentId) return [];
   // exclude deleted batches
-  const batches = await this.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchName: 1 });
-  return batches.map((b) => b.batchName);
+  const batches = await this.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchId: 1, batchName: 1 });
+  // return objects so frontend can use batchId for navigation
+  return batches.map((b) => ({ _id: b._id, batchId: b.batchId, batchName: b.batchName }));
 };
 
 const BatchModel = mongoose.model("batchs", Batch);

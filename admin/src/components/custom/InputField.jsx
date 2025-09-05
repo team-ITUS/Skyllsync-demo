@@ -10,6 +10,7 @@ const InputField = ({
   placeholder = "",
   options = [],
   icon = null, // for file input
+  hidePlaceholder = false, // when true (for selects) suppress disabled placeholder so first option (e.g. 'All') is selectable & visible
   ...rest
 }) => {
   const fileInputRef = useRef(null);
@@ -43,9 +44,11 @@ const InputField = ({
             onChange={(e)=> onChange(e.target.value)}
             {...rest}
           >
-            <option value="" disabled>
-              {placeholder || "Select"}
-            </option>
+            {!hidePlaceholder && (
+              <option value="" disabled>
+                {placeholder || "Select"}
+              </option>
+            )}
             {options.map(opt => (
               <option key={opt.value || opt} value={opt.value || opt}>
                 {opt.label || opt}

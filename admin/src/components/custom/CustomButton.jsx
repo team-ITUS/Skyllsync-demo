@@ -9,6 +9,7 @@ const CustomButton = ({
   onClick = () => {},
   variant = "solid",
   disabled = false,
+  filterPill = false,
 }) => {
   // Build inline styles based on variant
   const style = {
@@ -16,14 +17,20 @@ const CustomButton = ({
     marginBottom: "-10px",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.6 : 1,
-    backgroundColor: variant === "solid" ? color : "transparent",
-    color: variant === "solid" ? "#fff" : color,
-    border: variant === "outline" ? `1px solid ${color}` : "none",
   };
+
+  // When using the dedicated filter pill, defer visual styling to CSS
+  if (!filterPill) {
+    style.backgroundColor = variant === "solid" ? color : "transparent"
+    style.color = variant === "solid" ? "#fff" : color
+    style.border = variant === "outline" ? `1px solid ${color}` : "none"
+  }
+
+  const parentClass = `custom-button-parent px-2 ${filterPill ? 'filter-pill' : ''}`
 
   return (
     <div
-      className="custom-button-parent px-2"
+      className={parentClass}
       style={style}
       onClick={!disabled ? onClick : undefined}
     >

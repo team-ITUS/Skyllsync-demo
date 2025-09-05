@@ -132,3 +132,9 @@
 .react-datepicker__aria-live {
 	display: none;
 }
+
+/* Space between date input (calendar icon) and nearby controls (eg. Filters button) */
+.dd-mm-yyyy-parent {
+  display: inline-block; /* ensure margin affects layout */
+  margin-right: 12px; /* adjust spacing as needed */
+}

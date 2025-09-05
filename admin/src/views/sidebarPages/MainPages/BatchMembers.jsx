@@ -198,10 +198,18 @@ const BatchMembers = () => {
 
 
   //get batch members
-  const getBatchMembers = async (page) => {
+  // accepts optional idsList to avoid race condition when setting studIdsList
+  const getBatchMembers = async (page, idsList) => {
     try {
+      const list = Array.isArray(idsList) && idsList.length ? idsList : studIdsList
+      if (!list || !Array.isArray(list) || list.length === 0) {
+        setStudents([])
+        setTotalPages(1)
+        return
+      }
+
       const response = await axios.post(`${BASE_URL}/student/getStudentsByIds`, {
-        studIdsList: studIdsList,
+        studIdsList: list,
         page,
         limit,
         search: searchName,
@@ -395,9 +403,41 @@ const BatchMembers = () => {
     }
   };
 
+  // When searchName changes, re-fetch members (will be no-op if no ids present)
   useEffect(() => {
-    getBatchMembers(currentPage);
+    getBatchMembers(currentPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchName])
+
+  // If navigated with batchId but no studIdsList was provided, fetch batch to derive studentIds then load members
+  useEffect(() => {
+    const ensureAndLoad = async () => {
+      try {
+        if ((!studIdsList || !Array.isArray(studIdsList) || studIdsList.length === 0) && batchId) {
+          const resp = await axios.get(`${BASE_URL}/batch/getBatchById/${batchId}`)
+          const data = resp?.data
+          if (data?.success && data?.batchDtl) {
+            const raw = data.batchDtl.studentIds || []
+            const ids = raw.map((it) => (typeof it === 'string' ? it : (it?.studentId || it?.studentId))).filter(Boolean)
+            setStudIdsList(ids)
+            await getBatchMembers(currentPage, ids)
+            return
+          }
+        }
+        // otherwise, if studIdsList already present, just fetch
+        if (studIdsList && studIdsList.length > 0) {
+          getBatchMembers(currentPage)
+        }
+      } catch (err) {
+        console.error('Error ensuring studIdsList:', err)
+        // attempt default fetch
+        getBatchMembers(currentPage)
+      }
+    }
+    ensureAndLoad()
+    // re-run when batchId or searchName changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchId])
 
   useEffect(() => {
     const fetchBatchName = async () => {

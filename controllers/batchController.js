@@ -1032,15 +1032,15 @@ const getBatchNamesByStudent = async (req, res) => {
     if (!studentId) {
       return res.status(400).json({ success: false, message: 'studentId param is required' });
     }
-    // Use model static helper if available
-    if (typeof BatchModel.getBatchNamesByID === 'function') {
-      const names = await BatchModel.getBatchNamesByID(studentId);
-      return res.status(200).json({ success: true, message: 'Batch names retrieved', enrolledBatches: names });
-    }
-    // Fallback: query batches containing studentId
-    const batches = await BatchModel.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchName: 1 });
-    const names = batches.map((b) => b.batchName);
-    return res.status(200).json({ success: true, message: 'Batch names retrieved', enrolledBatches: names });
+      // Use model static helper if available - return array of objects with ids and names
+      if (typeof BatchModel.getBatchNamesByID === 'function') {
+        const batches = await BatchModel.getBatchNamesByID(studentId);
+        return res.status(200).json({ success: true, message: 'Batch list retrieved', enrolledBatches: batches });
+      }
+      // Fallback: query batches containing studentId and return objects
+      const batches = await BatchModel.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchId: 1, batchName: 1 });
+      const mapped = batches.map((b) => ({ _id: b._id, batchId: b.batchId, batchName: b.batchName }));
+      return res.status(200).json({ success: true, message: 'Batch list retrieved', enrolledBatches: mapped });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
   }

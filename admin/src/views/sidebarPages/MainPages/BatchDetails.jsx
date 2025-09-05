@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Table, Modal, Button, Form, Col, Row, Spinner } from 'react-bootstrap'
 import { FaPencilAlt, FaEye, FaCheckCircle, FaIdCard } from 'react-icons/fa'
 import { MdCancel } from 'react-icons/md'
@@ -16,7 +16,7 @@ import axios from 'axios';
 import { BASE_URL } from '../../../BaseURL'
 
 import { GrScorecard } from 'react-icons/gr'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { FaFilePdf } from 'react-icons/fa'
 import UpdateBatch from './UpdateBatch'
 import { FaLink } from 'react-icons/fa'; // Add at the top with other imports
@@ -63,6 +63,7 @@ const BatchDetails = () => {
   const limit = 50
 
   const [batch, setBatch] = useState([])
+  const [allBatches, setAllBatches] = useState([]) // holds full unfiltered batch list for resets
   const [viewBatch, setViewBatch] = useState({}) // State for viewing batch details
   const [isEditable, setIsEditable] = useState(true)
   // Number of rows per page (both for main table and modal)
@@ -90,13 +91,56 @@ const BatchDetails = () => {
   const [selectedBranch, setSelectedBranch] = useState('')
 
   // Filter persistence
-  const FILTER_STORAGE_KEY = 'batch_filters_v1'
-  const [formFilters, setFormFilters] = useState({ courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' })
-  // Inline filter controls (toggled by Filter button)
+  // New persistent filter logic (mirrors RegisteredStudentsDetails)
+  const location = useLocation()
+  const PERSIST_KEY = useMemo(() => `batchFilters:${location.pathname}`,[location.pathname])
+  const PERSIST_FALLBACK_KEY = 'batchFilters'
   const [showInlineFilter, setShowInlineFilter] = useState(false)
-  const [inlineFilters, setInlineFilters] = useState({ ...formFilters })
-  const [allBatches, setAllBatches] = useState([]) // master copy for client-side filtering
-  const [appliedFilters, setAppliedFilters] = useState(null)
+  const [isFilteredMode, setIsFilteredMode] = useState(false)
+  const [batchFilter, setBatchFilter] = useState({
+    courseName: '',
+    batchName: '',
+    branchName: '',
+    certificateId: '',
+    studentName: '',
+  })
+  const lastAppliedKeyRef = useRef('')
+  const autoApplyDebounceRef = useRef(null)
+  // dropdown meta
+  const [batchOptions, setBatchOptions] = useState([])
+  const [courseOptions, setCourseOptions] = useState([])
+  const [branchOptions, setBranchOptions] = useState([])
+  const [isFilterMetaLoading, setIsFilterMetaLoading] = useState(false)
+  const loadFilterMeta = async () => {
+    if (isFilterMetaLoading) return
+    setIsFilterMetaLoading(true)
+    try {
+      const reqs = [
+        axios.get(`${BASE_URL}/batch/getAllBatch`, { params: { page: 1, limit: 1000 } }).catch(() => ({ data: {} })),
+        axios.get(`${BASE_URL}/course/getAllCourses`).catch(() => ({ data: {} })),
+        axios.get(`${BASE_URL}/branch/getAllBranches`).catch(() => ({ data: {} })),
+      ]
+      const [bRes, cRes, brRes] = await Promise.all(reqs)
+      const bList = bRes?.data?.allBatchDtl || []
+      if (Array.isArray(bList)) {
+        const opts = [...new Set(bList.map(b => (b.batchName||'').trim()).filter(Boolean))]
+          .sort((a,b)=>a.localeCompare(b)).map(v=>({label:v,value:v}))
+  setBatchOptions([{ label:'All', value:'' }, ...opts])
+      }
+      const cList = cRes?.data?.coursesList || []
+      if (Array.isArray(cList)) {
+        const opts = [...new Set(cList.map(c => (c.courseName||'').trim()).filter(Boolean))]
+          .sort((a,b)=>a.localeCompare(b)).map(v=>({label:v,value:v}))
+  setCourseOptions([{ label:'All', value:'' }, ...opts])
+      }
+      const brList = brRes?.data?.branchesList || []
+      if (Array.isArray(brList)) {
+        const opts = [...new Set(brList.map(br => (br.branchName||'').trim()).filter(Boolean))]
+          .sort((a,b)=>a.localeCompare(b)).map(v=>({label:v,value:v}))
+  setBranchOptions([{ label:'All', value:'' }, ...opts])
+      }
+    } catch (e) { /* silent */ } finally { setIsFilterMetaLoading(false) }
+  }
 
   const [validity, setValidity] = useState('')
 
@@ -534,19 +578,12 @@ const BatchDetails = () => {
   // Get batch details
   const getBatchDtl = async (currentPage) => {
     try {
-      // When called without filters, fetch all batches via getAllBatch; when filters are provided, backend will handle them
-      const response = await axios.get(`${BASE_URL}/batch`, {
-        params: {
-          page: currentPage,
-          limit,
-          role,
-          uuid,
-          searchName,
-          // statusFilter,
-          dateFrom,
-          dateTo,
-        },
-      })
+      // Build params and omit empty/null so backend treats as unfiltered
+      const params = { page: currentPage, limit, role, uuid }
+      if (searchName && String(searchName).trim()) params.searchName = String(searchName).trim()
+      if (dateFrom) params.dateFrom = dateFrom
+      if (dateTo) params.dateTo = dateTo
+      const response = await axios.get(`${BASE_URL}/batch`, { params })
       const respData = response.data
 
       if (respData?.success) {
@@ -565,121 +602,158 @@ const BatchDetails = () => {
     }
   }
 
+  // Fallback unfiltered fetch (wide) in case main endpoint returns empty unexpectedly after clearing filters
+  const fallbackAllBatches = async () => {
+    try {
+      const resp = await axios.get(`${BASE_URL}/batch/getAllBatch`, { params: { page:1, limit:1000 } })
+      const list = resp?.data?.allBatchDtl || []
+      if (list.length > 0) {
+        setBatch(list)
+        setTotalPages(1)
+      }
+    } catch {}
+  }
+
   // Filter handlers
-  const handleApplyFilters = async (filters) => {
-    const toApply = filters || formFilters
-    try { localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(toApply)) } catch (err) {}
-    setAppliedFilters(toApply)
-    setFormFilters(toApply)
-  // modal removed: no-op
-    // Fetch filtered data from backend
+  // --- Persistence helpers ---
+  const buildPersistableFilters = (f) => ({
+    courseName: (f.courseName || '').trim(),
+    batchName: (f.batchName || '').trim(),
+    branchName: (f.branchName || '').trim(),
+    certificateId: (f.certificateId || '').trim(),
+    studentName: (f.studentName || '').trim(),
+  })
+  const buildSearchFromFilters = (f, pageVal) => {
+    const p = buildPersistableFilters(f)
+    const sp = new URLSearchParams()
+    Object.entries(p).forEach(([k,v])=>{ if(v) sp.set(k,v) })
+    if (pageVal && Number(pageVal)>1) sp.set('page',String(pageVal))
+    return `?${sp.toString()}`
+  }
+  const parseFiltersFromSearch = (search) => {
+    const sp = new URLSearchParams(search || '')
+    const get = (k)=> sp.get(k) || ''
+    const filters = {
+      courseName: get('courseName'),
+      batchName: get('batchName'),
+      branchName: get('branchName'),
+      certificateId: get('certificateId'),
+      studentName: get('studentName'),
+    }
+    const page = Number(sp.get('page')||'1')||1
+    return { filters, page }
+  }
+  const saveFiltersToHistory = (filters, extras={}) => {
     try {
-      const response = await axios.get(`${BASE_URL}/batch/search`, { params: { ...toApply, page: currentPage, limit, role, uuid } })
-      const respData = response.data
-      if (respData?.success) {
-        setBatch(respData.allBatchDtl || [])
-        setAllBatches(respData.allBatchDtl || [])
-        setTotalPages(respData.totalPages || 1)
+      const payload = { ...buildPersistableFilters(filters), applied:true, page: typeof extras.page==='number'?extras.page:currentPage }
+      const prev = window.history.state || {}
+      const storeRoot = prev.__filters__ || {}
+      const forPath = { filters: payload, showPanel: typeof extras.showPanel === 'boolean'? extras.showPanel : showInlineFilter, isFilteredMode: typeof extras.isFilteredMode === 'boolean'?extras.isFilteredMode:isFilteredMode }
+      const next = { ...prev, __filters__: { ...storeRoot, [location.pathname]: forPath } }
+      window.history.replaceState(next, document.title, window.location.href)
+      const newSearch = buildSearchFromFilters(filters, payload.page)
+      if (location.search !== newSearch) navigate({ search: newSearch }, { replace:true })
+      try { sessionStorage.setItem(PERSIST_KEY, JSON.stringify(forPath)); sessionStorage.setItem(PERSIST_FALLBACK_KEY, JSON.stringify(forPath)) } catch {}
+    } catch {}
+  }
+  const hasPersistedFilters = () => {
+    try {
+      const root = window.history.state || {}
+      if (root.__filters__ && root.__filters__[location.pathname]) return true
+      if (sessionStorage.getItem(PERSIST_KEY)) return true
+    } catch {}
+    return false
+  }
+  const hasAnyFilter = (f) => !!(f && (f.courseName?.trim()||f.batchName?.trim()||f.branchName?.trim()||f.certificateId?.trim()||f.studentName?.trim()))
+  const buildFilterParams = (pageVal) => {
+    const f = batchFilter
+    const params = { page: pageVal||1, limit, role, uuid }
+    if (f.courseName) params.courseName = f.courseName
+    if (f.batchName) params.batchName = f.batchName
+    if (f.branchName) params.branch = f.branchName
+    if (f.certificateId) params.certificateId = f.certificateId
+    if (f.studentName) params.studentName = f.studentName
+    return params
+  }
+  const fetchFilteredBatches = async (pageVal) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/batch/search`, { params: buildFilterParams(pageVal || currentPage) })
+      const data = response.data
+      if (data?.success) {
+        setBatch(data.allBatchDtl || [])
+        setTotalPages(Math.max(1, data.totalPages || 1))
       } else {
-        setBatch(respData.allBatchDtl || [])
-        setAllBatches(respData.allBatchDtl || [])
-        setTotalPages(respData.totalPages || 1)
+        setBatch([])
+        setTotalPages(1)
       }
-    } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to fetch filtered batches')
-    }
+    } catch { setBatch([]); setTotalPages(1) }
   }
-
-  // Inline filter helpers
-  const setInlineField = (key, value) => setInlineFilters((p) => ({ ...p, [key]: value }))
-
-  const handleApplyInlineFilters = async () => {
-    // persist and delegate to existing apply handler
+  const applyFiltersSilently = async () => {
+    if (!hasAnyFilter(batchFilter)) return
+    const key = JSON.stringify(buildPersistableFilters(batchFilter))
+    if (isFilteredMode && lastAppliedKeyRef.current === key) return
+    const nextPage = 1
+    setIsFilteredMode(true)
+    setCurrentPage(nextPage)
+    saveFiltersToHistory(batchFilter,{ page: nextPage, isFilteredMode:true, showPanel: showInlineFilter })
+    await fetchFilteredBatches(nextPage)
+    lastAppliedKeyRef.current = key
+  }
+  const clearHistoryFilters = () => {
     try {
-      await handleApplyFilters(inlineFilters)
-      setShowInlineFilter(false)
-    } catch (err) {
-      // handled in handleApplyFilters
-    }
+      const prev = window.history.state || {}
+      const storeRoot = { ...(prev.__filters__||{}) }
+      delete storeRoot[location.pathname]
+      const next = { ...prev, __filters__: storeRoot }
+      window.history.replaceState(next, document.title, window.location.href)
+      try { sessionStorage.removeItem(PERSIST_KEY); sessionStorage.removeItem(PERSIST_FALLBACK_KEY) } catch {}
+      if (location.search) navigate({ search:'' }, { replace:true })
+    } catch {}
   }
-
-  const handleClearInlineFilters = async () => {
-    try { localStorage.removeItem(FILTER_STORAGE_KEY) } catch (err) {}
-    const empty = { courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' }
-    setInlineFilters(empty)
-    setFormFilters(empty)
-    setAppliedFilters(null)
-    // refresh main list
+  const loadFiltersFromHistory = () => {
     try {
-      const data = await getBatchDtl(currentPage)
-      setBatch(data || [])
-      setAllBatches(data || [])
-    } catch (err) {
-      // ignore
-    }
+      const root = window.history.state || {}
+      let reg = root.__filters__?.[location.pathname]
+      if (!reg) { try { const raw = sessionStorage.getItem(PERSIST_KEY); if (raw) reg = JSON.parse(raw) } catch {} }
+      if (!reg) {
+        const fromUrl = parseFiltersFromSearch(location.search)
+        if (fromUrl && hasAnyFilter(fromUrl.filters)) {
+          reg = { filters: { ...buildPersistableFilters(fromUrl.filters), applied:true, page: fromUrl.page }, showPanel:true, isFilteredMode:true }
+        }
+      }
+      if (!reg) { try { const raw2 = sessionStorage.getItem(PERSIST_FALLBACK_KEY); if (raw2) reg = JSON.parse(raw2) } catch {} }
+      if (!reg || !reg.filters?.applied) return null
+      return { filters: reg.filters, page: reg.filters.page || 1, showPanel: !!reg.showPanel, isFilteredMode: !!reg.isFilteredMode }
+    } catch { return null }
   }
-
-  const handleResetFilters = async () => {
-    try { localStorage.removeItem(FILTER_STORAGE_KEY) } catch (err) {}
-  const empty = { courseName: '', batchName: '', studentName: '', certificateId: '', branch: '' }
-    setFormFilters(empty)
-    setAppliedFilters(null)
-  // modal removed: no-op
-    // Fetch all batches again
-    try {
-      const data = await getBatchDtl(currentPage)
-      setBatch(data || [])
-      setAllBatches(data || [])
-    } catch (err) {
-      // ignore
+  const handleApplyBatchFilter = () => {
+    const active = hasAnyFilter(batchFilter)
+    setIsFilteredMode(active)
+    const nextPage = 1
+    setCurrentPage(nextPage)
+    if (active) {
+      saveFiltersToHistory(batchFilter,{ page: nextPage, isFilteredMode:true, showPanel:false })
+      fetchFilteredBatches(nextPage)
+      toast.success('Filters applied')
+    } else {
+      clearHistoryFilters(); getBatchDtl(1)
     }
+    setShowInlineFilter(false)
   }
-
-  // Apply filters (AND semantics) to an array of batches
-  const applyFiltersToData = (data = [], filters = {}) => {
-    if (!data || data.length === 0) return []
-  const { courseName, batchName, studentName, certificateId, branch } = filters || {}
-    return data.filter((b) => {
-      // Course Name
-      if (courseName && !String(b.courseName || '').toLowerCase().includes(courseName.toLowerCase())) return false
-      // Batch Name
-      if (batchName && !String(b.batchName || '').toLowerCase().includes(batchName.toLowerCase())) return false
-      // Certificate ID - try multiple possible fields
-      if (certificateId) {
-        const certFields = [b.certificateId, b.issuedCertificateId, b?.certificateId, b?.issuedCertId]
-        const found = certFields.some((f) => f && String(f).toLowerCase().includes(certificateId.toLowerCase()))
-        if (!found) return false
-      }
-      // Branch - check branchName or branchId
-      if (branch) {
-        const branchName = (b.branchName || b.branch || b.branchId || '').toString().toLowerCase()
-        if (!branchName.includes(branch.toLowerCase())) return false
-      }
-
-      // Student name matching (partial, case-insensitive)
-      if (studentName) {
-        const s = studentName.toLowerCase()
-        let matched = false
-        if (b.studentNames && typeof b.studentNames === 'string') {
-          if (b.studentNames.toLowerCase().includes(s)) matched = true
-        }
-        if (!matched && Array.isArray(b.students)) {
-          for (const st of b.students) {
-            const nm = (st?.studentName || st?.name || '').toString().toLowerCase()
-            if (nm && nm.includes(s)) { matched = true; break }
-          }
-        }
-        if (!matched && Array.isArray(b.studentList)) {
-          for (const st of b.studentList) {
-            const nm = (st?.studentName || st?.name || '').toString().toLowerCase()
-            if (nm && nm.includes(s)) { matched = true; break }
-          }
-        }
-        if (!matched) return false
-      }
-
-      return true
-    })
+  const handleClearBatchFilter = () => {
+    if (autoApplyDebounceRef.current) clearTimeout(autoApplyDebounceRef.current)
+    // Reset all filter-related state to pristine (empty) so selects show placeholder unless hidePlaceholder is used (then 'All')
+    setBatchFilter({ courseName:'', batchName:'', branchName:'', certificateId:'', studentName:'' })
+    setSearchName('')
+    setSearchName2('')
+    setDateFrom('')
+    setDateTo('')
+    lastAppliedKeyRef.current = ''
+    setIsFilteredMode(false)
+    setCurrentPage(1)
+  setShowInlineFilter(false)
+    clearHistoryFilters()
+  getBatchDtl(1).then(list => { if (!list || list.length === 0) fallbackAllBatches() })
   }
 
   //fetch examin table details
@@ -774,25 +848,57 @@ const BatchDetails = () => {
   }
 
 
+  // Initial load + filter restoration
   useEffect(() => {
-    const load = async () => {
-    const data = await getBatchDtl(currentPage)
-      // try to apply saved filters after batches are loaded
-      try {
-        const saved = localStorage.getItem(FILTER_STORAGE_KEY)
-        if (saved) {
-            const parsed = JSON.parse(saved)
-            setFormFilters(parsed)
-            setAppliedFilters(parsed)
-            setBatch(applyFiltersToData(data || [], parsed))
-            setInlineFilters(parsed)
-          }
-      } catch (err) {
-        // ignore
+    const init = async () => {
+      const saved = loadFiltersFromHistory()
+      if (saved && (saved.isFilteredMode || hasAnyFilter(saved.filters))) {
+        setBatchFilter({
+          courseName: saved.filters.courseName||'',
+          batchName: saved.filters.batchName||'',
+          branchName: saved.filters.branchName||'',
+          certificateId: saved.filters.certificateId||'',
+          studentName: saved.filters.studentName||'',
+        })
+        setIsFilteredMode(true)
+        setShowInlineFilter(!!saved.showPanel)
+        const pageToUse = hasAnyFilter(saved.filters) ? (saved.page || 1) : 1
+        const desired = buildSearchFromFilters(saved.filters, pageToUse)
+        if (location.search !== desired) navigate({ search: desired }, { replace:true })
+        setCurrentPage(pageToUse)
+        await fetchFilteredBatches(pageToUse)
+        return
+      }
+      await getBatchDtl(currentPage)
+      if (hasAnyFilter(batchFilter) && !isFilteredMode) {
+        applyFiltersSilently()
       }
     }
-    load()
-  }, [currentPage, dateFrom, dateTo, searchName])
+    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Auto-apply on filter field change
+  useEffect(()=>{
+    if (autoApplyDebounceRef.current) clearTimeout(autoApplyDebounceRef.current)
+    if (!hasAnyFilter(batchFilter)) { if (isFilteredMode) handleClearBatchFilter(); return }
+    autoApplyDebounceRef.current = setTimeout(()=>{ applyFiltersSilently() },300)
+    return ()=>{ if (autoApplyDebounceRef.current) clearTimeout(autoApplyDebounceRef.current) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchFilter])
+
+  // Re-fetch when page/search changes
+  useEffect(()=>{
+    if (isFilteredMode) fetchFilteredBatches(currentPage); else getBatchDtl(currentPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchName, dateFrom, dateTo, isFilteredMode])
+
+  // Keep history updated with page/panel changes
+  useEffect(()=>{ if (isFilteredMode) saveFiltersToHistory(batchFilter,{ page: currentPage, showPanel: showInlineFilter, isFilteredMode }) }, [currentPage, showInlineFilter, isFilteredMode, batchFilter])
+
+  // Load meta when panel opens or when existing filters present
+  useEffect(()=>{ if (showInlineFilter && (batchOptions.length===0||courseOptions.length===0||branchOptions.length===0)) loadFilterMeta() }, [showInlineFilter])
+  useEffect(()=>{ if (hasAnyFilter(batchFilter)) loadFilterMeta() }, [])
 
   const generateShareLink = async (batchId) => {
     try {
@@ -936,15 +1042,25 @@ const BatchDetails = () => {
             {/* Inline filter area - toggled by Filter button */}
             {showInlineFilter && (
               <div className="row mb-3">
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Course" value={inlineFilters.courseName} onChange={(v) => setInlineField('courseName', v)} placeholder="Course" /></div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Batch" value={inlineFilters.batchName} onChange={(v) => setInlineField('batchName', v)} placeholder="Batch" /></div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Student" value={inlineFilters.studentName} onChange={(v) => setInlineField('studentName', v)} placeholder="Student name" /></div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Certificate ID" value={inlineFilters.certificateId} onChange={(v) => setInlineField('certificateId', v)} placeholder="Cert ID" /></div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2"><InputField label="Branch" value={inlineFilters.branch} onChange={(v) => setInlineField('branch', v)} placeholder="Branch" /></div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                  <InputField hidePlaceholder label="Course" type="select" value={batchFilter.courseName} onChange={(v)=>setBatchFilter(p=>({...p,courseName: v||''}))} options={courseOptions} loading={isFilterMetaLoading} placeholder="Course" />
+                </div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                  <InputField hidePlaceholder label="Batch" type="select" value={batchFilter.batchName} onChange={(v)=>setBatchFilter(p=>({...p,batchName: v||''}))} options={batchOptions} loading={isFilterMetaLoading} placeholder="Batch" />
+                </div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                  <InputField hidePlaceholder label="Branch" type="select" value={batchFilter.branchName} onChange={(v)=>setBatchFilter(p=>({...p,branchName: v||''}))} options={branchOptions} loading={isFilterMetaLoading} placeholder="Branch" />
+                </div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                  <InputField label="Certificate ID" value={batchFilter.certificateId} onChange={(v)=>setBatchFilter(p=>({...p,certificateId:v}))} placeholder="Cert ID" />
+                </div>
+                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                  <InputField label="Student" value={batchFilter.studentName} onChange={(v)=>setBatchFilter(p=>({...p,studentName:v}))} placeholder="Student" />
+                </div>
                 <div className="col-lg-2 col-md-12 d-flex align-items-end px-2">
                   <div className="d-flex gap-2 flex-wrap justify-content-end" style={{ width: '100%' }}>
-                    <CustomButton title='Apply' icon="Check.svg" onClick={handleApplyInlineFilters} />
-                    <CustomButton title='Clear' variant='outline' onClick={handleClearInlineFilters} />
+                    <CustomButton title='Apply' icon="Check.svg" onClick={handleApplyBatchFilter} />
+                    <CustomButton title='Clear' variant='outline' onClick={handleClearBatchFilter} />
                   </div>
                 </div>
               </div>
