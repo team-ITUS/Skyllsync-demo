@@ -1025,22 +1025,41 @@ const downloadSinglePhoto = async (req, res) => {
   }
 };
 
-// Return array of batch names where the provided studentId is enrolled
+// Return array of batch objects { batchId, batchName } where the provided studentId is enrolled
 const getBatchNamesByStudent = async (req, res) => {
   try {
     const { studentId } = req.params;
     if (!studentId) {
       return res.status(400).json({ success: false, message: 'studentId param is required' });
     }
-      // Use model static helper if available - return array of objects with ids and names
-      if (typeof BatchModel.getBatchNamesByID === 'function') {
-        const batches = await BatchModel.getBatchNamesByID(studentId);
-        return res.status(200).json({ success: true, message: 'Batch list retrieved', enrolledBatches: batches });
-      }
-      // Fallback: query batches containing studentId and return objects
-      const batches = await BatchModel.find({ studentIds: studentId, deleteStatus: { $ne: 'deleted' } }, { batchId: 1, batchName: 1 });
-      const mapped = batches.map((b) => ({ _id: b._id, batchId: b.batchId, batchName: b.batchName }));
-      return res.status(200).json({ success: true, message: 'Batch list retrieved', enrolledBatches: mapped });
+
+    const normalize = (b) => {
+      if (!b) return null;
+      // prefer explicit batchId, fallback to Mongo _id as string if necessary
+      const batchId = b.batchId || (b._id ? String(b._id) : undefined);
+      const batchName = b.batchName || b.name || b.batch || b.batchTitle || '';
+      if (!batchId) return null;
+      return { batchId, batchName };
+    };
+
+    let raw = [];
+    if (typeof BatchModel.getBatchNamesByID === 'function') {
+      // helper might return an array of different shapes; normalize below
+      const result = await BatchModel.getBatchNamesByID(studentId);
+      if (Array.isArray(result)) raw = result;
+    } else {
+      // fallback: query batches containing studentId and return minimal fields
+      raw = await BatchModel.find(
+        { studentIds: studentId, deleteStatus: { $ne: 'deleted' } },
+        { batchId: 1, batchName: 1 }
+      );
+    }
+
+    const batches = Array.isArray(raw)
+      ? raw.map(normalize).filter(Boolean)
+      : [];
+
+    return res.status(200).json({ success: true, message: 'Batch list retrieved', enrolledBatches: batches });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
   }

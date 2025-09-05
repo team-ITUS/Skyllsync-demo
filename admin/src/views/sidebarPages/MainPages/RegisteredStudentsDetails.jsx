@@ -885,6 +885,30 @@ const buildSearchFromFilters = (filters, pageVal) => {
     }
   }
 
+  // Open a batch page: fetch batch details (studentIds) then navigate to BatchMembers
+  const handleOpenBatch = async (batchId) => {
+    if (!batchId) return
+    try {
+      // close the student modal before navigating
+      setViewModal(false)
+      const res = await axios.get(`${BASE_URL}/batch/getBatchById/${batchId}`)
+      const batchDtl = res?.data?.batchDtl || res?.data?.batch || res?.data || {}
+      // studIdsList can be an array of strings or objects; normalize to array of ids
+      const studIdsList = Array.isArray(batchDtl?.studentIds)
+        ? batchDtl.studentIds.map((it) => (typeof it === 'string' ? it : (it?.studentId || ''))).filter(Boolean)
+        : (Array.isArray(batchDtl?.students) ? batchDtl.students.map(s => s.studentId).filter(Boolean) : [])
+      // if backend provided a populated students array, use it as fast-path
+      const studentsFull = Array.isArray(res?.data?.students) ? res.data.students : (Array.isArray(batchDtl?.students) ? batchDtl.students : null)
+      const outgoingBatchName = batchDtl?.batchName || res?.data?.batchName || ''
+      // navigate to batchmembers page with student ids, batchId, batchName and optional studentsFull
+      navigate('/batchmembers', { state: { studIdsList, batchId, batchName: outgoingBatchName, studentsFull } })
+    } catch (err) {
+      // fallback: still navigate with only batchId so BatchMembers can try to fetch
+      setViewModal(false)
+      navigate('/batchmembers', { state: { studIdsList: [], batchId } })
+    }
+  }
+
   // Open image in new tab when clicked in modal
   const handleImageClick = (url) => {
     try {
@@ -1467,11 +1491,25 @@ const buildSearchFromFilters = (filters, pageVal) => {
                     <label><strong>Enrolled Batches:</strong></label>
                     <div style={{ marginTop: 6 }}>
                       {enrolledBatches && enrolledBatches.length > 0 ? (
-                        enrolledBatches.map((bName, idx) => (
-                          <div key={idx} style={{ marginBottom: 6 }}>
-                            <strong>{bName}</strong>
-                          </div>
-                        ))
+                        enrolledBatches.map((b, idx) => {
+                          // Support both legacy string entries and newer object entries from the backend
+                          const name = typeof b === 'string'
+                            ? b
+                            : (b && (b.batchName || b.name || b.batch || b.batchTitle)) || '';
+                          const key = (b && (b._id || b.batchId)) || idx;
+                          return (
+                            <div
+                              key={key}
+                              style={{ marginBottom: 6, cursor: name ? 'pointer' : 'default' }}
+                              role={name ? 'button' : undefined}
+                              tabIndex={name ? 0 : undefined}
+                              onClick={() => { if (name && (b && (b._id || b.batchId))) handleOpenBatch(b._id || b.batchId) }}
+                              onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && name && (b && (b._id || b.batchId))) handleOpenBatch(b._id || b.batchId) }}
+                            >
+                              <strong style={{ textDecoration: name ? 'underline' : 'none' }}>{name}</strong>
+                            </div>
+                          )
+                        })
                       ) : (
                         <div style={{ color: '#6c757d' }}>Not enrolled in any batch</div>
                       )}
