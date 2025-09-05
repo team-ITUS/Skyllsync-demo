@@ -26,3 +26,47 @@
   	color: #fff;
   	font-family: Jost;
 }
+
+/* Small dedicated filter pill used only for the Filters control */
+.custom-button-parent.filter-pill {
+	background: #fff;
+	color: #23346a;
+	border: 1px solid #23346a;
+	padding: 10px; /* match other buttons */
+	gap: 10px; /* match other buttons */
+	height: 34px; /* same as .custom-button-parent default */
+	border-radius: 22px; /* same rounded shape */
+	font-size: 16px; /* match other buttons */
+	white-space: nowrap; /* prevent wrapping */
+	display: inline-flex;
+	align-items: center;
+}
+
+.custom-button-parent.filter-pill .custom-button {
+	font-weight: 400; /* same as other buttons' title style */
+	color: inherit;
+	font-size: inherit;
+}
+
+/* boxed icon on the right */
+.custom-button-parent.filter-pill .custom-icon {
+	width: 22px;
+	height: 22px;
+	min-width: 22px;
+	min-height: 22px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #23346a;
+	border-radius: 4px;
+	box-sizing: border-box;
+	background: #fff;
+	color: #23346a;
+}
+
+.custom-button-parent.filter-pill .custom-icon img,
+.custom-button-parent.filter-pill .custom-icon svg,
+.custom-button-parent.filter-pill .custom-icon {
+	width: 12px;
+	height: 12px;
+}

@@ -4895,3 +4895,7 @@
 [2025-09-04T11:06:14.698Z] [INFO] [logger.js:38] [Mongo] Connected
 [2025-09-04T11:21:09.927Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-04T11:21:10.450Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-04T12:15:42.706Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-05T04:53:01.433Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-05T04:53:04.311Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-05T04:53:04.311Z] [INFO] [logger.js:38] [Mongo] Reconnected

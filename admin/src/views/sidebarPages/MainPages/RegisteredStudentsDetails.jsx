@@ -14,7 +14,7 @@ const MySwal = withReactContent(Swal)
 import 'react-toastify/dist/ReactToastify.css' // Import CSS for react-toastify
 // Importing XLSX for Excel file reading
 import * as XLSX from 'xlsx' // Import XLSX to read Excel files
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import InputField from '../../../components/custom/InputField'
 import Date_Picker from '../../../components/custom/Date_Picker'
 import CustomButton from '../../../components/custom/CustomButton'
@@ -38,6 +38,9 @@ const RegisteredStudentsTable = () => {
   const [isEditMode, setIsEditMode] = useState(false)
   const [studentData, setStudentData] = useState(selectedStudent)
   const navigate = useNavigate() // Initialize useNavigate
+  const location = useLocation()
+  const PERSIST_KEY = React.useMemo(() => `registeredStudentsFilters:${location.pathname}`, [location.pathname])
+  const PERSIST_FALLBACK_KEY = 'registeredStudentsFilters'
   const [selectedFiles, setSelectedFiles] = useState({
     imagePath: null,
     adhaarImage: null,
@@ -60,6 +63,9 @@ const RegisteredStudentsTable = () => {
     startDate: null,
     endDate: null,
   })
+  // Track the last applied filter signature to avoid redundant applies
+  const lastAppliedKeyRef = useRef('')
+  const autoApplyDebounceRef = useRef(null)
   // Fetch registered students from the backend
   const fetchStudents = async (currentPage) => {
     try {
@@ -88,59 +94,193 @@ const RegisteredStudentsTable = () => {
     }
   }
 
-  // Utilities for filter persistence
-  const saveFilterToStorage = (filters) => {
+  // Persistence using history.state (no localStorage)
+  const buildPersistableFilters = (filters) => {
+    const normalizeSel = (v) => (v && typeof v === 'object') ? (v.value ?? '') : v
+    return {
+      certificateId: normalizeSel(filters.certificateId) || '',
+      batchName: normalizeSel(filters.batchName) || '',
+      courseName: normalizeSel(filters.courseName) || '',
+      branchName: normalizeSel(filters.branchName) || '',
+      startDate: filters.startDate ? toISODate(filters.startDate) : '',
+      endDate: filters.endDate ? toISODate(filters.endDate) : '',
+    }
+  }
+const buildSearchFromFilters = (filters, pageVal) => {
+    const f = buildPersistableFilters(filters)
+    const sp = new URLSearchParams()
+    if (f.courseName) sp.set('courseName', f.courseName)
+    if (f.batchName) sp.set('batchName', f.batchName)
+    if (f.branchName) sp.set('branchName', f.branchName)
+    if (f.certificateId) sp.set('certificateId', f.certificateId)
+    if (f.startDate) sp.set('startDate', f.startDate)
+    if (f.endDate) sp.set('endDate', f.endDate)
+    if (pageVal && Number(pageVal) > 1) sp.set('page', String(pageVal))
+    return `?${sp.toString()}`
+  }
+
+  const parseFiltersFromSearch = (search) => {
+    const sp = new URLSearchParams(search || '')
+    const get = (k) => sp.get(k) || ''
+    const isoToDate = (s) => {
+      if (!s) return null
+      const d = new Date(s)
+      return isNaN(d.getTime()) ? null : d
+    }
+    const filters = {
+      courseName: get('courseName'),
+      batchName: get('batchName'),
+      branchName: get('branchName'),
+      certificateId: get('certificateId'),
+      startDate: isoToDate(get('startDate')),
+      endDate: isoToDate(get('endDate')),
+    }
+    const page = Number(sp.get('page') || '1') || 1
+    return { filters, page }
+  }
+
+  const saveFiltersToHistory = (filters, extras = {}) => {
     try {
       const payload = {
-        ...filters,
-        // store as ISO date string (YYYY-MM-DD) or empty string
-        startDate: filters.startDate ? toISODate(filters.startDate) : '',
-        endDate: filters.endDate ? toISODate(filters.endDate) : '',
+        ...buildPersistableFilters(filters),
+        applied: true,
+        page: typeof extras.page === 'number' ? extras.page : currentPage,
       }
-  try { console.debug('[studentFilters] save ->', payload) } catch(e) {}
-  localStorage.setItem('studentFilters', JSON.stringify(payload))
+      const prev = window.history.state || {}
+      const storeRoot = prev.__filters__ || {}
+      const forPath = {
+        filters: payload,
+        showPanel: typeof extras.showPanel === 'boolean' ? extras.showPanel : showStudentFilter,
+        isFilteredMode: typeof extras.isFilteredMode === 'boolean' ? extras.isFilteredMode : isFilteredMode,
+      }
+      const next = { ...prev, __filters__: { ...storeRoot, [location.pathname]: forPath } }
+      try { console.debug('[studentFilters][history] save ->', next) } catch(e) {}
+      window.history.replaceState(next, document.title, window.location.href)
+      // also reflect in URL (replace) for durable persistence/shareable links
+      const newSearch = buildSearchFromFilters(filters, payload.page)
+      try {
+        if (location.search !== newSearch) navigate({ search: newSearch }, { replace: true })
+      } catch {}
+  // sessionStorage fallback to persist across new route entries
+  try {
+        sessionStorage.setItem(PERSIST_KEY, JSON.stringify(forPath))
+        sessionStorage.setItem(PERSIST_FALLBACK_KEY, JSON.stringify(forPath))
+      } catch {}
     } catch {}
   }
-  const loadFilterFromStorage = () => {
+
+  // Detect if we have persisted filters for this route (history.state or sessionStorage)
+  const hasPersistedFilters = () => {
     try {
-      const raw = localStorage.getItem('studentFilters')
-  try { console.debug('[studentFilters] raw ->', raw) } catch(e) {}
-      if (!raw) return null
-      const parsed = JSON.parse(raw)
-  try { console.debug('[studentFilters] parsed ->', parsed) } catch(e) {}
-      // Defensive parsing: only convert non-empty strings to Date objects
+      const root = window.history.state || {}
+      if (root.__filters__ && root.__filters__[location.pathname]) return true
+      if (sessionStorage.getItem(PERSIST_KEY)) return true
+    } catch {}
+    return false
+  }
+
+  // Apply filters without toasts or panel side-effects (used on resume/navigation back)
+  const applyFiltersSilently = async () => {
+    if (!hasAnyFilter(studentFilter)) return
+    const key = JSON.stringify(buildPersistableFilters(studentFilter))
+    if (isFilteredMode && lastAppliedKeyRef.current === key) return
+    const nextPage = 1
+    setIsFilteredMode(true)
+    setCurrentPage(nextPage)
+    try { saveFiltersToHistory(studentFilter, { page: nextPage, isFilteredMode: true, showPanel: showStudentFilter }) } catch {}
+    // fetch immediately to avoid timing issues on navigation back
+    await fetchFilteredStudents(nextPage)
+    lastAppliedKeyRef.current = key
+  }
+
+  const loadFiltersFromHistory = () => {
+    try {
+      const root = window.history.state || {}
+      const storeRoot = root.__filters__ || {}
+      let reg = storeRoot[location.pathname]
+      if (!reg) {
+        try {
+          const raw = sessionStorage.getItem(PERSIST_KEY)
+          if (raw) reg = JSON.parse(raw)
+        } catch {}
+      }
+     // as last resort, parse from URL query params
+      if (!reg) {
+        const fromUrl = parseFiltersFromSearch(location.search)
+        if (fromUrl && (hasAnyFilter(fromUrl.filters))) {
+          reg = {
+            filters: {
+              ...buildPersistableFilters(fromUrl.filters),
+              applied: true,
+              page: fromUrl.page,
+            },
+            showPanel: true,
+            isFilteredMode: true,
+          }
+        }
+      }
+      if (!reg) {
+        try {
+          const raw2 = sessionStorage.getItem(PERSIST_FALLBACK_KEY)
+          if (raw2) reg = JSON.parse(raw2)
+        } catch {}
+      }
+      if (!reg || !reg.filters || !reg.filters.applied) return null
+      const parsed = reg.filters
       const makeDate = (v) => {
         if (!v) return null
         try {
           const d = new Date(v)
           return isNaN(d.getTime()) ? null : d
-        } catch {
-          return null
-        }
+        } catch { return null }
       }
       return {
-        certificateId: parsed.certificateId || '',
-        batchName: parsed.batchName || '',
-        courseName: parsed.courseName || '',
-        branchName: parsed.branchName || '',
-        startDate: makeDate(parsed.startDate),
-        endDate: makeDate(parsed.endDate),
+        filters: {
+          certificateId: parsed.certificateId || '',
+          batchName: parsed.batchName || '',
+          courseName: parsed.courseName || '',
+          branchName: parsed.branchName || '',
+          startDate: makeDate(parsed.startDate),
+          endDate: makeDate(parsed.endDate),
+        },
+        page: typeof parsed.page === 'number' ? parsed.page : 1,
+        showPanel: typeof reg.showPanel === 'boolean' ? reg.showPanel : true,
+        isFilteredMode: typeof reg.isFilteredMode === 'boolean' ? reg.isFilteredMode : true,
       }
-    } catch {
-      return null
-    }
+    } catch { return null }
   }
-  const clearFilterStorage = () => {
-    try { localStorage.removeItem('studentFilters') } catch {}
+
+  const clearHistoryFilters = () => {
+    try {
+      const prev = window.history.state || {}
+    const storeRoot = { ...(prev.__filters__ || {}) }
+    delete storeRoot[location.pathname]
+    const next = { ...prev, __filters__: storeRoot }
+      window.history.replaceState(next, document.title, window.location.href)
+   try {
+        sessionStorage.removeItem(PERSIST_KEY)
+        sessionStorage.removeItem(PERSIST_FALLBACK_KEY)
+      } catch {}
+      try {
+        if (location.search) navigate({ search: '' }, { replace: true })
+      } catch {}
+      // try {
+      //   if (location.search) navigate({ search: '' }, { replace: true })
+      // } catch {}
+    } catch {}
   }
 
   const hasAnyFilter = (f) => {
     if (!f) return false
+    const textVal = (v) => {
+      if (v && typeof v === 'object') return (v.value || '').trim()
+      return (v || '').toString().trim()
+    }
     return Boolean(
-      (f.certificateId && f.certificateId.trim()) ||
-      (f.batchName && f.batchName.trim()) ||
-      (f.courseName && f.courseName.trim()) ||
-      (f.branchName && f.branchName.trim()) ||
+      textVal(f.certificateId) ||
+      textVal(f.batchName) ||
+      textVal(f.courseName) ||
+      textVal(f.branchName) ||
       f.startDate || f.endDate
     )
   }
@@ -148,10 +288,11 @@ const RegisteredStudentsTable = () => {
   const buildFilterParams = (pageVal) => {
     const f = studentFilter
     const params = { page: pageVal || 1, limit }
-    if (f.certificateId) params.certificateId = f.certificateId
-    if (f.batchName) params.batchName = f.batchName
-    if (f.courseName) params.courseName = f.courseName
-    if (f.branchName) params.branchName = f.branchName
+    const getVal = (v) => (v && typeof v === 'object') ? (v.value ?? '') : v
+    if (getVal(f.certificateId)) params.certificateId = getVal(f.certificateId)
+    if (getVal(f.batchName)) params.batchName = getVal(f.batchName)
+    if (getVal(f.courseName)) params.courseName = getVal(f.courseName)
+    if (getVal(f.branchName)) params.branchName = getVal(f.branchName)
     if (f.startDate) params.startDate = toISODate(f.startDate)
     if (f.endDate) params.endDate = toISODate(f.endDate)
     return params
@@ -185,14 +326,15 @@ const RegisteredStudentsTable = () => {
   const handleApplyStudentFilter = () => {
     const active = hasAnyFilter(studentFilter)
     setIsFilteredMode(active)
-    setCurrentPage(1)
+    const nextPage = 1
+    setCurrentPage(nextPage)
     if (active) {
-      saveFilterToStorage(studentFilter)
-  try { console.debug('[studentFilters] applied ->', studentFilter) } catch(e) {}
-      fetchFilteredStudents(1)
+    saveFiltersToHistory(studentFilter, { page: nextPage, isFilteredMode: true, showPanel: false })
+  try { console.debug('[studentFilters][history] applied ->', studentFilter) } catch(e) {}
+      fetchFilteredStudents(nextPage)
       toast.success('Filters applied')
     } else {
-      clearFilterStorage()
+    clearHistoryFilters()
       fetchStudents(1)
     }
   // follow BatchDetails UX: hide the filter panel after applying filters
@@ -210,7 +352,7 @@ const RegisteredStudentsTable = () => {
     })
     setIsFilteredMode(false)
     setCurrentPage(1)
-    clearFilterStorage()
+  clearHistoryFilters()
     fetchStudents(1)
   }
 
@@ -224,20 +366,57 @@ const RegisteredStudentsTable = () => {
 
 
   useEffect(() => {
-    // Load saved filters on first mount
-    const saved = loadFilterFromStorage()
-    if (saved && hasAnyFilter(saved)) {
-      setStudentFilter(saved)
+    // Load saved filters (from history.state) on first mount
+    const saved = loadFiltersFromHistory()
+    if (saved && (saved.isFilteredMode || hasAnyFilter(saved.filters))) {
+      setStudentFilter(saved.filters)
       setIsFilteredMode(true)
-  // restore filter panel visibility when saved filters exist
-  setShowStudentFilter(true)
-      setCurrentPage(1)
-      fetchFilteredStudents(1)
+      setShowStudentFilter(Boolean(saved.showPanel))
+      const pageToUse = hasAnyFilter(saved.filters) ? (saved.page || 1) : 1
+      try {
+        const desired = buildSearchFromFilters(saved.filters, pageToUse)
+        if (location.search !== desired) navigate({ search: desired }, { replace: true })
+      } catch {}
+      setCurrentPage(pageToUse)
+      fetchFilteredStudents(pageToUse)
+      return
+    }
+  // If UI already shows filters but not applied yet, auto-apply silently
+  if (!isFilteredMode && hasAnyFilter(studentFilter)) {
+      applyFiltersSilently()
       return
     }
     fetchStudents(currentPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // One-time auto-apply guard: if filters appear (restored) but mode isn't active yet, auto-apply
+  const didAutoApplyRef = useRef(false)
+  useEffect(() => {
+    if (didAutoApplyRef.current) return
+    if (!isFilteredMode && hasAnyFilter(studentFilter)) {
+      didAutoApplyRef.current = true
+      applyFiltersSilently()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentFilter, isFilteredMode])
+
+  // Auto-apply on any filter field change (debounced), and auto-clear when fields are emptied
+  useEffect(() => {
+    if (autoApplyDebounceRef.current) clearTimeout(autoApplyDebounceRef.current)
+    if (!hasAnyFilter(studentFilter)) {
+      // if no filters remain but mode is active, clear automatically
+      if (isFilteredMode) handleClearStudentFilter()
+      return
+    }
+    autoApplyDebounceRef.current = setTimeout(() => {
+      applyFiltersSilently()
+    }, 300)
+    return () => {
+      if (autoApplyDebounceRef.current) clearTimeout(autoApplyDebounceRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentFilter])
 
   // Re-fetch on deps change
   useEffect(() => {
@@ -248,6 +427,14 @@ const RegisteredStudentsTable = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, searchTerm, dateFrom, dateTo, isFilteredMode])
+
+  // Keep history.state in sync while filters are active (page/panel)
+  useEffect(() => {
+    if (isFilteredMode) {
+      try { saveFiltersToHistory(studentFilter, { page: currentPage, showPanel: showStudentFilter, isFilteredMode }) } catch {}
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, isFilteredMode, studentFilter, showStudentFilter])
 
 
   const handleChangeStudent = (e) => {
@@ -827,12 +1014,21 @@ const RegisteredStudentsTable = () => {
 
         <div className="col-lg-4 mt-4 d-flex justify-content-end gap-2">
 
-          <CustomButton
-            title={showStudentFilter ? 'Hide Filters' : 'Filters'}
-            icon="Clone.svg"
-            variant='outline'
+          <div
+            className="custom-button-parent filter-pill"
             onClick={() => setShowStudentFilter((s) => !s)}
-          />
+            role="button"
+            tabIndex={0}
+            style={{ cursor: 'pointer' }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowStudentFilter((s) => !s) }}
+          >
+            <div className="custom-button ps-2">
+              {showStudentFilter ? 'Hide Filters' : 'Filters'}
+            </div>
+            <div className="custom-icon d-flex align-items-center justify-content-center">
+              <img src="Clone.svg" alt="filters" style={{ width: 12, height: 12 }} />
+            </div>
+          </div>
 
 
           <CustomButton
@@ -857,7 +1053,7 @@ const RegisteredStudentsTable = () => {
           />
 
           <CustomButton
-            title="Register Student"
+            title={"Register\u00A0Student"}
             onClick={handleShowModal}
             icon="tabler_plus.svg"
           />
