@@ -82,17 +82,34 @@
   float: left;
 }
 .react-datepicker__day-names {
-  white-space: nowrap;
-  margin-bottom: -8px;
+  /* Use flex layout so weekday headings distribute evenly and don't overlap */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 0 6px;
 }
+
 .react-datepicker__day-name {
+  /* hide original text and replace with ::after abbreviations below */
   color: #000;
   display: inline-block;
+  position: relative;
   width: 1.7rem;
-  line-height: 1.7rem;
+  line-height: 1.6rem;
   text-align: center;
-  margin: 0.166rem;
+  margin: 0;
+  visibility: hidden; /* hide native text to avoid overlap */
 }
+
+/* Insert 3-letter abbreviations for weekdays using nth-child */
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(1)::after { content: 'Sun'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(2)::after { content: 'Mon'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(3)::after { content: 'Tue'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(4)::after { content: 'Wed'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(5)::after { content: 'Thu'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(6)::after { content: 'Fri'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(7)::after { content: 'Sat'; visibility: visible; position: relative; display: block; }
 .react-datepicker__month {
   margin: 0.4rem;
   text-align: center;

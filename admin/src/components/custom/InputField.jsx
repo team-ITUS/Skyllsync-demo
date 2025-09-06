@@ -19,7 +19,7 @@ const InputField = ({
   if (type === "select") {
     return (
       <div className="name-parent">
-        {label && <label style={{fontSize: "14px"}}>{label}</label>}
+        {label && <label className="field-label">{label}</label>}
         <div className="dd-mm-yyyy-parent mt-2" style={{padding: 0}}>
           <select
             className="custom-date-input"
@@ -63,7 +63,7 @@ const InputField = ({
   if (type === "file") {
     return (
       <div className="name-parent">
-        {label && <label style={{fontSize: "14px"}}>{label}</label>}
+        {label && <label className="field-label">{label}</label>}
         <div
           className="dd-mm-yyyy-parent mt-2"
           style={{ cursor: "pointer", position: "relative" }}
@@ -113,7 +113,7 @@ const InputField = ({
   // Default: text, number, etc.
   return (
     <div className="name-parent">
-      {label && <label style={{fontSize: "14px"}}>{label}</label>}
+      {label && <label className="field-label">{label}</label>}
       <div className="dd-mm-yyyy-parent mt-2" style={{padding: 0}}>
         <input
           type={type}
