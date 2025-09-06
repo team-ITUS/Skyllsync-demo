@@ -57,6 +57,7 @@ const BatchDetails = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [searchName, setSearchName] = useState(null)
+  const [isSearchActive, setIsSearchActive] = useState(false)
   const [searchName2, setSearchName2] = useState(null)
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -745,6 +746,7 @@ const BatchDetails = () => {
     // Reset all filter-related state to pristine (empty) so selects show placeholder unless hidePlaceholder is used (then 'All')
     setBatchFilter({ courseName:'', batchName:'', branchName:'', certificateId:'', studentName:'' })
     setSearchName('')
+  setIsSearchActive(false)
     setSearchName2('')
     setDateFrom('')
     setDateTo('')
@@ -889,9 +891,14 @@ const BatchDetails = () => {
 
   // Re-fetch when page/search changes
   useEffect(()=>{
+    // If user is actively searching (non-empty), prefer the search endpoint (getBatchDtl handles searchName)
+    if (isSearchActive && searchName && String(searchName).trim()) {
+      getBatchDtl(currentPage)
+      return
+    }
     if (isFilteredMode) fetchFilteredBatches(currentPage); else getBatchDtl(currentPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchName, dateFrom, dateTo, isFilteredMode])
+  }, [currentPage, searchName, dateFrom, dateTo, isFilteredMode, isSearchActive])
 
   // Keep history updated with page/panel changes
   useEffect(()=>{ if (isFilteredMode) saveFiltersToHistory(batchFilter,{ page: currentPage, showPanel: showInlineFilter, isFilteredMode }) }, [currentPage, showInlineFilter, isFilteredMode, batchFilter])
@@ -1010,7 +1017,16 @@ const BatchDetails = () => {
             <div className="row position-relative mb-2 d-flex align-items-center">
               <div className="col-lg-3 d-flex justify-content-center">
                 <div style={{ width: "100%" }}>
-                  <InputField label="Search By" value={searchName} onChange={setSearchName} placeholder="Search by batch, course, examiner, trainer" />
+                  <InputField
+                    label="Search By"
+                    value={searchName}
+                    onChange={(val) => {
+                      setSearchName(val)
+                      setIsSearchActive(Boolean(String(val || '').trim()))
+                      setCurrentPage(1)
+                    }}
+                    placeholder="Search by batch, course, examiner, trainer"
+                  />
                 </div>
               </div>
 

@@ -52,6 +52,7 @@ const RegisteredStudentsTable = () => {
   // Add these states at the top
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [isSearchActive, setIsSearchActive] = useState(false)
   // Student Filter state (for /student/filter-students)
   const [showStudentFilter, setShowStudentFilter] = useState(false)
   const [isFilteredMode, setIsFilteredMode] = useState(false)
@@ -153,6 +154,29 @@ const RegisteredStudentsTable = () => {
         setTotalPages(respData.totalPages) // Set total pages from response
       } else {
         toast.error(respData?.message || 'No Student available')
+      }
+    } catch (err) {
+      setStudents([])
+      setTotalPages(1)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch students for search (ignores filtered mode) so search works even when filters are applied
+  const fetchSearchResults = async (pageVal) => {
+    try {
+      setLoading(true)
+      const response = await axios.get(`${BASE_URL}/student/getRegisteredStud`, {
+        params: { page: pageVal || 1, limit, searchTerm, dateFrom, dateTo },
+      })
+      const respData = response.data
+      if (respData?.success) {
+        setStudents(respData.studentDtl)
+        setTotalPages(respData.totalPages)
+      } else {
+        setStudents([])
+        setTotalPages(1)
       }
     } catch (err) {
       setStudents([])
@@ -486,15 +510,21 @@ const buildSearchFromFilters = (filters, pageVal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentFilter])
 
-  // Re-fetch on deps change
+  // Re-fetch on deps change. If user is actively searching, run search results (bypass filtered fetch)
   useEffect(() => {
+    const hasSearch = Boolean((searchTerm || '').toString().trim()) && isSearchActive
+    if (hasSearch) {
+      // when user is typing a search, show search results regardless of filtered mode
+      fetchSearchResults(currentPage)
+      return
+    }
     if (isFilteredMode) {
       fetchFilteredStudents(currentPage)
     } else {
       fetchStudents(currentPage)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchTerm, dateFrom, dateTo, isFilteredMode])
+  }, [currentPage, searchTerm, dateFrom, dateTo, isFilteredMode, isSearchActive])
 
   // Keep history.state in sync while filters are active (page/panel)
   useEffect(() => {
@@ -1077,6 +1107,8 @@ const buildSearchFromFilters = (filters, pageVal) => {
               onChange={(val) => {
                 setSearchTerm(val)
                 setCurrentPage(1)
+                // mark search active when user types; this allows search to bypass filtered mode
+                setIsSearchActive(Boolean((val || '').toString().trim()))
               }}
             />
           </div>
