@@ -100,7 +100,6 @@ const BatchDetails = () => {
   const [isFilteredMode, setIsFilteredMode] = useState(false)
   const [batchFilter, setBatchFilter] = useState({
     courseName: '',
-    batchName: '',
     branchName: '',
     certificateId: '',
     studentName: '',
@@ -619,7 +618,6 @@ const BatchDetails = () => {
   // --- Persistence helpers ---
   const buildPersistableFilters = (f) => ({
     courseName: (f.courseName || '').trim(),
-    batchName: (f.batchName || '').trim(),
     branchName: (f.branchName || '').trim(),
     certificateId: (f.certificateId || '').trim(),
     studentName: (f.studentName || '').trim(),
@@ -636,7 +634,6 @@ const BatchDetails = () => {
     const get = (k)=> sp.get(k) || ''
     const filters = {
       courseName: get('courseName'),
-      batchName: get('batchName'),
       branchName: get('branchName'),
       certificateId: get('certificateId'),
       studentName: get('studentName'),
@@ -670,7 +667,6 @@ const BatchDetails = () => {
     const f = batchFilter
     const params = { page: pageVal||1, limit, role, uuid }
     if (f.courseName) params.courseName = f.courseName
-    if (f.batchName) params.batchName = f.batchName
     if (f.branchName) params.branch = f.branchName
     if (f.certificateId) params.certificateId = f.certificateId
     if (f.studentName) params.studentName = f.studentName
@@ -1061,9 +1057,7 @@ const BatchDetails = () => {
                 <div className="col-lg-2 col-md-4 col-sm-6 px-2">
                   <InputField hidePlaceholder label="Course" type="select" value={batchFilter.courseName} onChange={(v)=>setBatchFilter(p=>({...p,courseName: v||''}))} options={courseOptions} loading={isFilterMetaLoading} placeholder="Course" />
                 </div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
-                  <InputField hidePlaceholder label="Batch" type="select" value={batchFilter.batchName} onChange={(v)=>setBatchFilter(p=>({...p,batchName: v||''}))} options={batchOptions} loading={isFilterMetaLoading} placeholder="Batch" />
-                </div>
+                {/* Batch filter removed as requested */}
                 <div className="col-lg-2 col-md-4 col-sm-6 px-2">
                   <InputField hidePlaceholder label="Branch" type="select" value={batchFilter.branchName} onChange={(v)=>setBatchFilter(p=>({...p,branchName: v||''}))} options={branchOptions} loading={isFilterMetaLoading} placeholder="Branch" />
                 </div>
