@@ -30,14 +30,15 @@ const StatCard = ({ title, value, icon, onClick }) => (
 const Dashboard = () => {
   const [statsData, setStatsData] = useState([]);
   const navigate = useNavigate();
-  const profileName = localStorage.getItem('userName')
+  const profileName = localStorage.getItem('userName');
+  const userRole = localStorage.getItem('role');
   useEffect(() => {
     const fetchAdminDBDtl = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/admin/getAdminDBDtl`);
         const { adminDBDtl } = response.data;
 
-        const updatedStatsData = [
+        let updatedStatsData = [
           { id: 1, title: 'Students', value: adminDBDtl?.noOfStudent, icon: './dash_student.svg', path: '/registered-students' },
           { id: 2, title: 'Trainers', value: adminDBDtl?.noOfTrainer, icon: './dash_trainer.svg', path: '/trainer-details' },
           { id: 3, title: 'Examiners', value: adminDBDtl?.noOfAccessor, icon: './dash_examiner.svg', path: '/accessor-details' },
@@ -48,6 +49,13 @@ const Dashboard = () => {
           { id: 8, title: 'License', icon: './dash_license.svg', path: '/license-template' },
         ];
 
+        // Remove Certificates and License for trainers
+        if (userRole === 'trainer') {
+          updatedStatsData = updatedStatsData.filter(
+            stat => stat.title !== 'Certificates' && stat.title !== 'License'
+          );
+        }
+
         setStatsData(updatedStatsData);
       } catch (error) {
         console.error("Error fetching admin DB details:", error);
@@ -55,7 +63,7 @@ const Dashboard = () => {
     };
 
     fetchAdminDBDtl();
-  }, []);
+  }, [userRole]);
 
   return (
     <Container fluid className="p-4">
