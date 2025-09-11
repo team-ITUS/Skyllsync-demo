@@ -76,6 +76,7 @@ const admin = [
     items: [
       { component: CNavItem, name: 'Profile Settings', to: '/admin-profile' },
       { component: CNavItem, name: 'App Setting', to: '/app-setting' },
+  { component: CNavItem, name: 'Sheets', to: '/sheets' },
     ],
   },
 ];

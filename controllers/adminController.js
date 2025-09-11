@@ -259,14 +259,14 @@ const commonLogIn = async (req, res) => {
         adminPassword: password,
       });
 
-      const menuDtl = await getMenuSubmenu(1);
-      let roleId = 1;
-      let role = "admin";
+  const roleId = 1; // keep UI parity (menus) with Admin
+  const role = 'admin';
+      const menuDtl = await getMenuSubmenu(roleId);
 
       return res.status(200).json({
         menuDtl,
-        roleId,
-        role,
+  roleId,
+  role,
         message: admin.data.message,
         success: true,
         profileName: userName,

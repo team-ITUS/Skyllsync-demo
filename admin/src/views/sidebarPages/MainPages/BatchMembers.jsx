@@ -462,9 +462,9 @@ const BatchMembers = () => {
   return (
     <div className="mainTableContainer">
       <div className="row">
-        <div className="col-4"><h4>{batchName}</h4></div>
+        <div className="col-4 text-center"><h5 style={{ color: '#1F3F89' }}>{batchName}</h5></div>
         <div className="col-4"><h4 style={{ textAlign: 'center', color: 'black', marginBottom: '3%', fontSize: "28px" }}>Batch Members</h4></div>
-        <div className="col-4">{linkCreatedAt}</div>
+        <div className="col-4 text-center"><h5 style={{ color: '#1F3F89' }}> Link Created: {formatISOToDDMMYYYY(linkCreatedAt)} </h5></div>
       </div>
 
       <div className="row mb-2 align-items-center justify-content-between">

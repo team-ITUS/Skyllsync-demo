@@ -48,8 +48,9 @@ const AdminLoginForm = () => {
         localStorage.setItem('role', respData?.role);
         localStorage.setItem('uuid', respData?.uuid);
 
-        // Store profileName as userName in local storage
-        localStorage.setItem('userName', respData.profileName);
+  // Store profileName as userName in local storage and set default header
+  localStorage.setItem('userName', respData.profileName);
+  try { axios.defaults.headers.common['x-profile-name'] = respData.profileName } catch {}
 
         toast.success(respData?.message);
         setTimeout(() => {

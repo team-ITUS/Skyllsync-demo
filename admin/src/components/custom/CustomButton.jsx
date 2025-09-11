@@ -5,7 +5,7 @@ import "./CustomButton.css"
 const CustomButton = ({
   title,
   icon = null,
-  color = "#374174",
+  color = "#1F3F89",
   onClick = () => {},
   variant = "solid",
   disabled = false,

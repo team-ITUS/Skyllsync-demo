@@ -125,7 +125,7 @@
   border-bottom: 3px solid #ffffff;
   border-left: 0px solid #dee2e6;
   border-right: 0px solid #dee2e6;
-  background-color: #3a4e7c;
+  background-color: #1F3F89;
   border-top: 0px solid #dee2e6;
   border-bottom: 15px solid #ffffff;
   /* border-top-left-radius: 20px;
@@ -136,7 +136,7 @@
   border-bottom: 15px solid #ffffff;
   border-left: 0px solid #dee2e6;
   border-right: 0px solid #dee2e6;
-  background-color: #3a4e7c;
+  background-color: #1F3F89;
   border-top: 0px solid #dee2e6;
   border-top-right-radius: 20px;  
   border-bottom-right-radius: 0;
@@ -148,7 +148,7 @@
 }
 
 .table tbody td{
-  background-color: #e3e8f0;
+  background-color: #E9EDFF;
   border-bottom: 5px solid #ffffff;
   border-left: 0px solid #dee2e6;
   border-right: 0px solid #dee2e6;
@@ -174,7 +174,7 @@
   border-bottom: 3px solid #ffffff;
   border-left: 0px solid #dee2e6;
   border-right: 0px solid #dee2e6;
-  background-color: #e3e8f0;
+  background-color: #E9EDFF;
   border-top: 0px solid #dee2e6;
   border-bottom-right-radius: 20px;  
   border-bottom: 10px solid #ffffff;
@@ -499,7 +499,7 @@
 /* Header text color: set #32415e for first and second header cells */
 .mainTableContainer .accessor-table thead th:first-child,
 .mainTableContainer .accessor-table thead th:nth-child(2) {
-  color: #32415e !important;
+  color: #1F3F89 !important;
 }
 
 /* Apply #f4f3f0 to the rest of header text (third and onward) */

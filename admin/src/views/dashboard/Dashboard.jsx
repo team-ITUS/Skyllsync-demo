@@ -61,7 +61,7 @@ const Dashboard = () => {
     <Container fluid className="p-4">
       <div className="dashboard-header mb-4 px-4 d-flex align-items-end justify-content-start" style={{backgroundImage: 'url(dash_bg.png)'}}>
         <div>
-          <h4 style={{ fontWeight: 'bold', color: '#374174' }}>Hello, {profileName}!</h4>
+          <h4 style={{ fontWeight: 'bold', color: '#1F3F89' }}>Hello, {profileName}!</h4>
           <p style={{color: 'black'}}>Access the summary of key metrics and student’s data.</p>
           </div>  
       </div>

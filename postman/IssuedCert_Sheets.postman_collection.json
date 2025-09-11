@@ -1,0 +1,196 @@
+{
+  "info": {
+    "_postman_id": "d5f8c7b2-0a2a-4d09-9bb6-9b1f0b5f1c7a",
+    "name": "Skyllsync - IssuedCert & Sheets APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection for the Issued Certificate Google Sheets utilities and aggregated data endpoints."
+  },
+  "item": [
+    {
+      "name": "Sheets - Read Sheet (used grid)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/read?sheetName=Sheet1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "read"
+          ],
+          "query": [
+            { "key": "sheetName", "value": "Sheet1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sheets - Read Range (A1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/range?range=Sheet1!A1:Z100",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "range"
+          ],
+          "query": [
+            { "key": "range", "value": "Sheet1!A1:Z100" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sheets - Update Range",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"range\": \"Sheet1!B2\",\n  \"values\": [[\"Updated\", \"123\"]],\n  \"valueInputOption\": \"USER_ENTERED\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/updateRange",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "updateRange"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sheets - Append Row",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"values\": [\"a\", \"b\", \"c\"],\n  \"range\": \"Sheet1!A1\",\n  \"valueInputOption\": \"USER_ENTERED\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/appendRow",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "appendRow"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sheets - Append Rows (2D)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sheetName\": \"Sheet1\",\n  \"rows\": [[\"r1c1\", \"r1c2\"], [\"r2c1\", \"r2c2\"]],\n  \"valueInputOption\": \"USER_ENTERED\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/appendRows",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "appendRows"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sheets - Find Duplicates by Column",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/sheets/duplicates?sheetName=Sheet1&columnName=certificateId&headerRowIndex=1&caseSensitive=false&trim=true&ignoreBlank=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "sheets",
+            "duplicates"
+          ],
+          "query": [
+            { "key": "sheetName", "value": "Sheet1" },
+            { "key": "columnName", "value": "certificateId" },
+            { "key": "headerRowIndex", "value": "1" },
+            { "key": "caseSensitive", "value": "false" },
+            { "key": "trim", "value": "true" },
+            { "key": "ignoreBlank", "value": "true" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "IssuedCert - All Issue Data (sorted by certificateId)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/allIssueData?onlyIssued=true&includeDuplicates=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "allIssueData"
+          ],
+          "query": [
+            { "key": "onlyIssued", "value": "true" },
+            { "key": "includeDuplicates", "value": "true" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "IssuedCert - All Issue Data (by batch & sorted)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/issuedCert/allIssueData?batchId=BATCH-001&onlyIssued=false&includeDuplicates=false",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "issuedCert",
+            "allIssueData"
+          ],
+          "query": [
+            { "key": "batchId", "value": "BATCH-001" },
+            { "key": "onlyIssued", "value": "false" },
+            { "key": "includeDuplicates", "value": "false" }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ]
+}

@@ -1042,8 +1042,8 @@ const BatchDetails = () => {
                     <div className="d-flex gap-2">
                         <CustomButton
                           title={showInlineFilter ? 'Hide Filters' : 'Filters'}
-                          icon="Clone.svg"
-                          variant='outline'
+                          icon="filter_w.svg"
+                          filterPill
                           onClick={() => setShowInlineFilter((s) => !s)}
                         />
                         <CustomButton title='Create Batch' icon="tabler_plus.svg" onClick={() => navigate("/create-batch")} />
@@ -1053,24 +1053,24 @@ const BatchDetails = () => {
             </div>
             {/* Inline filter area - toggled by Filter button */}
             {showInlineFilter && (
-              <div className="row mb-3">
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+              <div className="row gx-5 gy-2 mt-3 mx-2 py-3 px-5" style={{ background: '#f8f9fc', borderRadius: 8 }}>
+                <div className="col-lg-3 col-md-4 col-sm-6">
                   <InputField hidePlaceholder label="Course" type="select" value={batchFilter.courseName} onChange={(v)=>setBatchFilter(p=>({...p,courseName: v||''}))} options={courseOptions} loading={isFilterMetaLoading} placeholder="Course" />
                 </div>
                 {/* Batch filter removed as requested */}
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                <div className="col-lg-3 col-md-4 col-sm-6">
                   <InputField hidePlaceholder label="Branch" type="select" value={batchFilter.branchName} onChange={(v)=>setBatchFilter(p=>({...p,branchName: v||''}))} options={branchOptions} loading={isFilterMetaLoading} placeholder="Branch" />
                 </div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                <div className="col-lg-3 col-md-4 col-sm-6">
                   <InputField label="Certificate ID" value={batchFilter.certificateId} onChange={(v)=>setBatchFilter(p=>({...p,certificateId:v}))} placeholder="Cert ID" />
                 </div>
-                <div className="col-lg-2 col-md-4 col-sm-6 px-2">
+                <div className="col-lg-3 col-md-4 col-sm-6">
                   <InputField label="Student" value={batchFilter.studentName} onChange={(v)=>setBatchFilter(p=>({...p,studentName:v}))} placeholder="Student" />
                 </div>
-                <div className="col-lg-2 col-md-12 d-flex align-items-end px-2">
+                <div className="col-lg-12 col-md-12 d-flex align-items-end pt-3">
                   <div className="d-flex gap-2 flex-wrap justify-content-end" style={{ width: '100%' }}>
                     <CustomButton title='Apply' icon="Check.svg" onClick={handleApplyBatchFilter} />
-                    <CustomButton title='Clear' variant='outline' onClick={handleClearBatchFilter} />
+                    <CustomButton title='Clear' icon="wrong2.svg" variant='outline' onClick={handleClearBatchFilter} />
                   </div>
                 </div>
               </div>
@@ -1087,9 +1087,9 @@ const BatchDetails = () => {
                     {/* <th>Start Date</th> */}
                     {/* <th>End Date</th> */}
                     {/* <th>Count</th> */}
-                    <th>By Admin</th>
-                    <th>By Examiner</th>
-                    <th>By Trainer</th>
+                    {role === 'admin' && <th>By Admin</th>}
+                    {role !== 'trainer' && role !== "admin" && <th>By Examiner</th>}
+                    {role === 'trainer' && <th>By Trainer</th>}
                     {/* <th>Status</th> */}
                     <th>Action</th>
                   </tr>
@@ -1103,15 +1103,21 @@ const BatchDetails = () => {
                         <td onClick={() => goToview(batch)}>{(currentPage - 1) * limit + index + 1}</td>
                         <td className="special-yellow" onClick={() => goToview(batch)}>{batch.batchName}</td>
                         <td className="special-blue" onClick={() => goToview(batch)}>{batch.courseName}</td>
-                        <td onClick={() => goToview(batch)} style={{ fontWeight: '500', color: statusColor(batch?.byAdmin) }}>
-                          {batch?.byAdmin?.toUpperCase()}
-                        </td>
+                        { role === 'admin' && (
+                          <td onClick={() => goToview(batch)} style={{ fontWeight: '500', color: statusColor(batch?.byAdmin) }}>
+                            {batch?.byAdmin?.toUpperCase()}
+                          </td>
+                        )}
+                        { role !== 'trainer' && role !== "admin" && (
                         <td onClick={() => goToview(batch)} style={{ fontWeight: '500', color: statusColor(batch?.byExaminer) }}>
                           {batch?.byExaminer?.toUpperCase()}
                         </td>
+                        )}
+                        { role === 'trainer' && (
                         <td onClick={() => goToview(batch)} style={{ fontWeight: '500', color: statusColor(batch?.byTrainer) }}>
                           {batch?.byTrainer?.toUpperCase()}
                         </td>
+                        )}
                         <td className="position-relative">
 
                           <ActionMenu

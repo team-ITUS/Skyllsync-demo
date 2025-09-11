@@ -4927,3 +4927,298 @@
 [2025-09-05T10:29:56.459Z] [INFO] [logger.js:38] [Mongo] Connected
 [2025-09-06T04:58:31.351Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-06T04:58:31.760Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T04:54:49.277Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T04:54:50.169Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T08:56:57.937Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-08T08:56:58.007Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T08:56:58.008Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T09:02:28.040Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T09:02:28.042Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T09:02:38.232Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-08T09:02:38.264Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T09:02:38.264Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T09:39:07.029Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T09:39:17.160Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-08T09:39:17.176Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T09:39:17.177Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-08T10:23:36.143Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:23:39.583Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:23:41.994Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:26:15.891Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:26:18.273Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:26:23.268Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:26:23.566Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:26:24.982Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:26:25.381Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:05.796Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:10.014Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:12.261Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:16.103Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:16.327Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:32.386Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:32.623Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:41.747Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:42.052Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:45.206Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:45.445Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:48.801Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:51.072Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:54.062Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:54.319Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:27:57.604Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:27:59.896Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:50:31.480Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:50:33.049Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:50:33.349Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:52:01.444Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:52:01.967Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:52:44.341Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:52:44.662Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:53:16.862Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:53:19.170Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:53:25.287Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:53:25.570Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T10:53:35.251Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T10:53:35.518Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T11:12:31.163Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T11:12:33.717Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-08T11:12:39.601Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T11:12:44.778Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-08T11:12:45.275Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T04:55:30.594Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T04:55:31.247Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T04:57:13.241Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T04:57:13.940Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T04:57:16.548Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Invalid password"
+[2025-09-09T04:57:16.566Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T04:57:16.583Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T06:25:49.124Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:25:51.506Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:26:00.580Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:26:00.840Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:26:05.818Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:26:06.085Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:52:35.617Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:52:36.088Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:52:42.261Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:52:42.519Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:52:48.352Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:52:48.679Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:53:00.469Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:53:00.737Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:53:07.008Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:53:07.263Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T06:53:12.897Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T06:53:13.178Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:03:34.967Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Admin not exist"
+[2025-09-09T07:03:34.982Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:03:35.003Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:03:37.447Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Admin not exist"
+[2025-09-09T07:03:37.463Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:03:37.480Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:09:53.195Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:09:55.610Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:09:58.865Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:09:59.120Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:10:55.441Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:10:55.846Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:16:17.933Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Invalid password"
+[2025-09-09T07:16:17.949Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:16:17.963Z] [WARN] [logger.js:30] [commonLogIn] Trainer login failed: | "Invalid email. Please provide valid email"
+[2025-09-09T07:23:34.938Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:23:35.277Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:23:39.785Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:23:40.063Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:28:41.056Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:28:41.315Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:28:48.131Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:28:48.418Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:29:59.848Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:30:00.198Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:39:12.183Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:39:12.588Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:41:50.839Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:41:53.256Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:44:46.924Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:44:47.318Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T07:48:19.562Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T07:48:20.023Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T09:05:15.091Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-09T09:05:20.437Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-09T09:05:20.479Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T09:05:20.480Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-09T09:19:39.654Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T09:19:40.077Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T09:19:42.301Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T09:19:42.530Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T09:19:44.278Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T09:19:44.479Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T09:20:33.831Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T09:20:34.111Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T12:12:56.432Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T12:12:58.837Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-09T12:13:10.835Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-09T12:13:11.072Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T04:45:34.466Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T04:45:34.953Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:03:00.028Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T05:03:02.436Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:03:59.994Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T05:04:00.295Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:09:48.217Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T05:09:48.769Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:15:48.901Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T05:15:49.438Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:24:34.744Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T05:24:36.041Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T05:24:36.048Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":2}
+[2025-09-10T05:24:36.726Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A2:U3"}
+[2025-09-10T05:34:05.071Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T05:34:06.127Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T05:34:06.133Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":2}
+[2025-09-10T05:34:07.015Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A4:U5"}
+[2025-09-10T05:36:35.710Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T05:36:36.715Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T05:36:36.720Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":2}
+[2025-09-10T05:36:37.341Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A2:U3"}
+[2025-09-10T05:54:31.771Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T05:54:32.167Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T05:56:53.253Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T05:56:54.456Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T05:58:26.810Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T05:58:27.555Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T06:05:43.115Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T06:14:16.509Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-10T06:14:21.585Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T06:14:21.585Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T06:18:12.176Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:18:13.376Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:18:37.348Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:18:38.142Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:18:38.147Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T06:18:38.757Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T06:18:38.763Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":1}
+[2025-09-10T06:18:39.384Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A3:U3"}
+[2025-09-10T06:18:39.387Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:18:39.933Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T06:19:07.168Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:19:07.954Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:19:11.809Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:19:12.315Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:19:15.392Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:19:15.950Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:19:15.954Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T06:19:16.530Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T06:19:16.535Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":1}
+[2025-09-10T06:19:17.152Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A3:U3"}
+[2025-09-10T06:19:17.156Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:19:17.686Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T06:19:23.858Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:19:24.670Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:28:16.183Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:28:17.115Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T06:31:58.184Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T06:31:59.141Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T07:04:35.115Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T07:04:37.530Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T07:12:04.249Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:12:05.612Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T07:15:29.272Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:15:30.297Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T07:15:52.601Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:15:53.445Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":2}
+[2025-09-10T07:15:53.467Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:15:54.218Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:V1"}
+[2025-09-10T07:15:54.222Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":1}
+[2025-09-10T07:15:54.944Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A3:V3"}
+[2025-09-10T07:15:54.953Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:15:55.556Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:16:27.990Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T07:16:28.038Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:16:28.338Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T07:16:28.971Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:17:00.182Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:17:01.036Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:17:12.187Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:17:13.090Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:17:21.177Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:17:21.876Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:17:52.233Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:17:53.059Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:17:53.075Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:17:53.609Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T07:17:53.619Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":2}
+[2025-09-10T07:17:54.146Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A2:U3"}
+[2025-09-10T07:17:54.152Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:17:54.664Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:23:28.573Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:23:29.439Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:23:42.525Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:23:43.325Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:23:48.619Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:23:49.323Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:29:25.209Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:29:26.190Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:29:42.331Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:29:43.058Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:29:58.519Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:29:59.315Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":3}
+[2025-09-10T07:29:59.323Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:29:59.886Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:U1"}
+[2025-09-10T07:29:59.894Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":2}
+[2025-09-10T07:30:00.590Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A4:U5"}
+[2025-09-10T07:30:00.601Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:30:01.207Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:50:11.854Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T07:50:12.294Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T07:52:14.948Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:52:15.955Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:52:41.403Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:52:42.117Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:52:44.317Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:52:44.922Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:52:44.927Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:52:45.556Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:K1"}
+[2025-09-10T07:52:45.561Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":4}
+[2025-09-10T07:52:46.199Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A2:K5"}
+[2025-09-10T07:52:46.203Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:52:46.827Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:55:15.296Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
+[2025-09-10T07:55:15.470Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:55:16.362Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:55:17.775Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T07:56:38.180Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:56:39.200Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:57:14.862Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:57:15.620Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:58:18.894Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:58:19.803Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":1}
+[2025-09-10T07:58:19.817Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:58:20.434Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:K1"}
+[2025-09-10T07:58:20.438Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":4}
+[2025-09-10T07:58:20.963Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A2:K5"}
+[2025-09-10T07:58:20.967Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:58:21.539Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T07:59:30.783Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:59:31.511Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":4}
+[2025-09-10T07:59:33.211Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:59:33.698Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":4}
+[2025-09-10T07:59:33.703Z] [INFO] [logger.js:38] GoogleSheets.updateRange request | {"range":"Sheet1!A1"}
+[2025-09-10T07:59:34.208Z] [INFO] [logger.js:38] GoogleSheets.updateRange response | {"updatedRange":"Sheet1!A1:K1"}
+[2025-09-10T07:59:34.212Z] [INFO] [logger.js:38] GoogleSheets.appendRows request | {"range":"Sheet1","rowCount":1}
+[2025-09-10T07:59:34.735Z] [INFO] [logger.js:38] GoogleSheets.appendRows response | {"updatedRange":"Sheet1!A5:K5"}
+[2025-09-10T07:59:34.739Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T07:59:35.344Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T09:02:25.077Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T09:02:25.080Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T09:02:35.307Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-10T09:02:35.357Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T09:02:35.357Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T10:41:51.128Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T10:41:57.458Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-10T10:41:57.547Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-10T10:41:57.548Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-10T10:42:04.420Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T10:42:05.409Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}
+[2025-09-10T10:42:13.124Z] [INFO] [logger.js:38] GoogleSheets.readRange request | {"range":"Sheet1"}
+[2025-09-10T10:42:13.787Z] [INFO] [logger.js:38] GoogleSheets.readRange response | {"rowCount":5}

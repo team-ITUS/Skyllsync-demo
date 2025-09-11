@@ -86,7 +86,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: -12px;
   margin-bottom: 6px;
+  font-size: 14px;
   padding: 0 6px;
 }
 
@@ -103,13 +105,13 @@
 }
 
 /* Insert 3-letter abbreviations for weekdays using nth-child */
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(1)::after { content: 'Sun'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(2)::after { content: 'Mon'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(3)::after { content: 'Tue'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(4)::after { content: 'Wed'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(5)::after { content: 'Thu'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(6)::after { content: 'Fri'; visibility: visible; position: relative; display: block; }
-.react-datepicker__day-names .react-datepicker__day-name:nth-child(7)::after { content: 'Sat'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(1)::after { content: 'S'; visibility: visible; position: relative; display: block; color: red; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(2)::after { content: 'M'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(3)::after { content: 'T'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(4)::after { content: 'W'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(5)::after { content: 'T'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(6)::after { content: 'F'; visibility: visible; position: relative; display: block; }
+.react-datepicker__day-names .react-datepicker__day-name:nth-child(7)::after { content: 'S'; visibility: visible; position: relative; display: block;}
 .react-datepicker__month {
   margin: 0.4rem;
   text-align: center;
@@ -150,8 +152,4 @@
 	display: none;
 }
 
-/* Space between date input (calendar icon) and nearby controls (eg. Filters button) */
-.dd-mm-yyyy-parent {
-  display: inline-block; /* ensure margin affects layout */
-  margin-right: 12px; /* adjust spacing as needed */
-}
+

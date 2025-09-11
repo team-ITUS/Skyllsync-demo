@@ -46,6 +46,7 @@ const AddBatchStudents = React.lazy(() => import('./views/sidebarPages/MainPages
 const BatchMembers = React.lazy(()=>import('./views/sidebarPages/MainPages/BatchMembers'));
 const CertificateTemplate = React.lazy(() => import('./views/sidebarPages/MainPages/CertificateTemplate'));
 const LicenseTemplate = React.lazy(() => import('./views/sidebarPages/MainPages/LicenseTemplate'));
+const SheetsPage = React.lazy(() => import('./views/sidebarPages/MainPages/Sheets.jsx'));
 
 const routes = [
   { path: '/', name: 'Admin', element: AdminLogin },
@@ -83,6 +84,7 @@ const routes = [
   {path: '/batchmembers', name:"Batch Members", element:BatchMembers},
   { path: '/certificate-template', name: 'Certificate Template', element: CertificateTemplate },
   { path: '/license-template', name: 'License Template', element: LicenseTemplate },
+  { path: '/sheets', name: 'Sheets', element: SheetsPage },
 ]
 
 export default routes

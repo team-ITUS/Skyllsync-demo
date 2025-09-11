@@ -111,9 +111,9 @@ const InputField = ({
   }
 
   // Default: text, number, etc.
-  return (
+return (
     <div className="name-parent">
-      {label && <label className="field-label">{label}</label>}
+      {label && <label style={{fontSize: "14px"}}>{label}</label>}
       <div className="dd-mm-yyyy-parent mt-2" style={{padding: 0}}>
         <input
           type={type}

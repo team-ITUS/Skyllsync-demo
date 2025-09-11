@@ -1,10 +1,20 @@
 const { IssuedCertificateModel } = require("../models/issuedCertificateModel");
 const { BatchModel } = require("../models/batchModel");
 const { log, warn, error, info } = require('../utils/logger');
+const {
+  readRange: gsReadRange,
+  readSheet: gsReadSheet,
+  appendRow: gsAppendRow,
+  appendRows: gsAppendRows,
+  updateRange: gsUpdateRange,
+  findDuplicatesByColumn: gsFindDuplicatesByColumn,
+  issueCertData: gsIssueCertData,
+} = require('../services/googleSheetsService');
 
 const StudentModel = require("../models/resisterStudentModel");
 const { BranchModel } = require("../models/branchModel");
 const { completeBatchByTrainer } = require("../services/batchService");
+const { compByTrainer } = require("./batchController");
 
 const getExportableData = async (req, res) => {
   try {
@@ -453,10 +463,11 @@ const issueSingleCertificateById = async (req, res) => {
     if (!issuedDoc) {
       const newEntry = {
         studentId,
-        issued: true,
+        issued: false,
         issuedDate: issuedDateValue,
         grade: grade !== undefined ? grade : '',
       };
+      compByTrainer(batchId);
       const createdOrUpdated = await IssuedCertificateModel.findOneAndUpdate(
         { batchId },
         { $setOnInsert: { batchId }, $push: { studList: newEntry } },
@@ -484,7 +495,7 @@ const issueSingleCertificateById = async (req, res) => {
 
       // Student present but not issued yet -> mark issued
       const updateFields = {
-        'studList.$.issued': true,
+        'studList.$.issued': false,
         'studList.$.issuedDate': issuedDateValue,
       };
       if (grade !== undefined) updateFields['studList.$.grade'] = grade;
@@ -500,7 +511,7 @@ const issueSingleCertificateById = async (req, res) => {
     // Student not found in studList -> push new entry with issued=true
     const newEntry = {
       studentId,
-      issued: true,
+      issued: false,
       issuedDate: issuedDateValue,
       grade: grade !== undefined ? grade : '',
     };
@@ -531,4 +542,177 @@ module.exports = {
   certIdIncrementor,
   deleteIssuedCertificateByBatch,
   issueSingleCertificateById,
+  // Google Sheets helpers
+  gsReadRangeCtrl,
+  gsReadSheetCtrl,
+  gsUpdateRangeCtrl,
+  gsAppendRowCtrl,
+  gsAppendRowsCtrl,
+  gsFindDuplicatesCtrl,
+  // Issue cert data aggregation
+  getAllIssueCertDataSorted,
 };
+
+/**
+ * Google Sheets: Read a range (A1 notation). Example: GET /issuedCert/sheets/range?range=Sheet1!A1:Z
+ */
+async function gsReadRangeCtrl(req, res) {
+  try {
+    const { range = 'Sheet1' } = req.query;
+    const rows = await gsReadRange(range);
+    return res.status(200).json({ success: true, rows, range });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Google Sheets: Read full used grid of a sheet by name. Example: GET /issuedCert/sheets/read?sheetName=Sheet1
+ */
+async function gsReadSheetCtrl(req, res) {
+  try {
+    const { sheetName = 'Sheet1' } = req.query;
+    const rows = await gsReadSheet(sheetName);
+    return res.status(200).json({ success: true, rows, sheetName });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Google Sheets: Update a range with values. Example: POST /issuedCert/sheets/updateRange
+ * Body: { range: 'Sheet1!B2', values: [['val1','val2']], valueInputOption: 'USER_ENTERED' }
+ */
+async function gsUpdateRangeCtrl(req, res) {
+  try {
+    const { range, values, valueInputOption = 'USER_ENTERED' } = req.body || {};
+    if (!range) return res.status(400).json({ success: false, message: 'range is required' });
+    if (!values) return res.status(400).json({ success: false, message: 'values is required' });
+    const data = await gsUpdateRange(range, values, valueInputOption);
+    return res.status(200).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Google Sheets: Append a single row. Example: POST /issuedCert/sheets/appendRow
+ * Body: { values: ['a','b','c'], range: 'Sheet1!A1', valueInputOption: 'USER_ENTERED' }
+ */
+async function gsAppendRowCtrl(req, res) {
+  try {
+    const { values = [], range = 'Sheet1!A1', valueInputOption = 'USER_ENTERED' } = req.body || {};
+    const data = await gsAppendRow(values, range, valueInputOption);
+    return res.status(200).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Google Sheets: Append multiple rows. Example: POST /issuedCert/sheets/appendRows
+ * Body: { sheetName: 'Sheet1', rows: [['a','b'], ['c','d']], valueInputOption: 'USER_ENTERED' }
+ */
+async function gsAppendRowsCtrl(req, res) {
+  try {
+    const { sheetName, rows = [], valueInputOption = 'USER_ENTERED' } = req.body || {};
+    if (!sheetName) return res.status(400).json({ success: false, message: 'sheetName is required' });
+    if (!Array.isArray(rows)) return res.status(400).json({ success: false, message: 'rows must be an array' });
+    const data = await gsAppendRows(sheetName, rows, valueInputOption);
+    return res.status(200).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Google Sheets: Find duplicates by column. Example:
+ * GET /issuedCert/sheets/duplicates?sheetName=Sheet1&columnName=certificateId&headerRowIndex=1&caseSensitive=false&trim=true&ignoreBlank=true
+ */
+async function gsFindDuplicatesCtrl(req, res) {
+  try {
+    const {
+      sheetName,
+      columnName,
+      headerRowIndex = '1',
+      caseSensitive = 'false',
+      trim = 'true',
+      ignoreBlank = 'true',
+    } = req.query;
+
+    const result = await gsFindDuplicatesByColumn({
+      sheetName,
+      columnName,
+      headerRowIndex: Number(headerRowIndex) || 1,
+      caseSensitive: String(caseSensitive).toLowerCase() === 'true',
+      trim: String(trim).toLowerCase() === 'true',
+      ignoreBlank: String(ignoreBlank).toLowerCase() === 'true',
+    });
+    return res.status(200).json({ success: true, ...result });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * Get flattened issue certificate data (optionally by batchId), sorted by certificateId.
+ * Example: GET /issuedCert/allIssueData?onlyIssued=true or &batchId=XYZ
+ */
+async function getAllIssueCertDataSorted(req, res) {
+  try {
+    const { batchId, onlyIssued = 'false', includeDuplicates = 'false' } = req.query;
+    const data = await gsIssueCertData({ batchId, onlyIssued: String(onlyIssued).toLowerCase() === 'true' });
+    // Sort by certificateId (lexicographically, placing empty ids last)
+    const sorted = [...data].sort((a, b) => {
+      const A = (a.certificateId || '').toString();
+      const B = (b.certificateId || '').toString();
+      if (!A && !B) return 0;
+      if (!A) return 1;
+      if (!B) return -1;
+      return A.localeCompare(B, undefined, { numeric: true, sensitivity: 'base' });
+    });
+    // Enrich with batch metadata for UI convenience
+    try {
+      const ids = [...new Set(sorted.map(r => r.batchId).filter(Boolean))]
+      if (ids.length) {
+        const batches = await BatchModel.find(
+          { batchId: { $in: ids } },
+          { batchId: 1, batchName: 1, courseName: 1, startDate: 1, endDate: 1, validity: 1 }
+        ).lean()
+        const nameMap = new Map(batches.map(b => [b.batchId, b.batchName]))
+        const courseMap = new Map(batches.map(b => [b.batchId, b.courseName]))
+        const startMap = new Map(batches.map(b => [b.batchId, b.startDate]))
+        const endMap = new Map(batches.map(b => [b.batchId, b.endDate]))
+        const validityMap = new Map(batches.map(b => [b.batchId, b.validity]))
+        for (const row of sorted) {
+          row.batchName = nameMap.get(row.batchId) || ''
+          row.courseName = courseMap.get(row.batchId) || ''
+          row.startDate = startMap.get(row.batchId) || null
+          row.endDate = endMap.get(row.batchId) || null
+          row.validity = validityMap.get(row.batchId) ?? null
+        }
+      }
+    } catch (e) {
+      // non-fatal; continue without names
+      warn('Failed to enrich batchName in allIssueData', { err: e?.message })
+    }
+    // Optionally compute duplicates by certificateId
+    let duplicates = undefined;
+    if (String(includeDuplicates).toLowerCase() === 'true') {
+      const map = new Map();
+      for (const row of sorted) {
+        const key = (row.certificateId || '').trim();
+        if (!key) continue;
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push(row);
+      }
+      duplicates = [];
+      for (const [key, list] of map.entries()) {
+        if (list.length > 1) duplicates.push({ certificateId: key, rows: list });
+      }
+    }
+  return res.status(200).json({ success: true, count: sorted.length, data: sorted, duplicates });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+}

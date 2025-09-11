@@ -102,7 +102,7 @@ const AppSidebar = ({logos}) => {
         ...(!sidebarShow ? { width: "60px" } : {}),
         borderTopRightRadius: "20px",
         borderBottomRightRadius: "20px",
-        backgroundColor: "#374174",
+        backgroundColor: "#1F3F89",
         height: 'calc(100vh - 60px)',
         zIndex: 1050,
       }}

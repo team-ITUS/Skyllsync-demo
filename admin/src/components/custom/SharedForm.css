@@ -50,6 +50,7 @@ input[type="file"].custom-date-input {
 }
 .name-parent {
   	width: auto;
+	margin-top: 4.5px;
 }
 .frame-wrapper {
   	width: auto;
@@ -58,9 +59,9 @@ input[type="file"].custom-date-input {
 .dd-mm-yyyy-parent {
   	width: auto;
   	border-radius: 0px;
-		border: 0px solid rgba(0, 0, 0, 0.2);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-		font-size: 16px;
+	border: 0px solid rgba(0, 0, 0, 0.2);
+  	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	font-size: 16px;
   	box-sizing: border-box;
   	display: flex;
   	flex-direction: row;
@@ -68,51 +69,6 @@ input[type="file"].custom-date-input {
   	justify-content: space-between;
   	padding: 10px 20px;
   	gap: 0px;
-		color: rgba(0, 0, 0, 0.6);
+  	color: rgba(0, 0, 0, 0.6);
 	height: 34px;
 }
-
-/* Label style to match Date_Picker labels */
-.field-label {
-	font-size: 14px;
-	margin: 0;
-	font-weight: 500;
-	color: rgba(0,0,0,0.85);
-}
-
-/* Ensure inputs inside dd-mm-yyyy-parent mimic date picker appearance */
-.dd-mm-yyyy-parent .custom-date-input {
-	background: transparent;
-	border: none;
-	outline: none;
-	width: 100%;
-	height: 34px; /* uniform height */
-	padding: 10px 36px 10px 20px; /* leave space for icons */
-	font-size: 14px;
-	color: rgba(0,0,0,0.85);
-	font-weight: 400;
-}
-
-/* Placeholder color should match date placeholder grey */
-.dd-mm-yyyy-parent .custom-date-input::placeholder {
-	/* match date input placeholder color and weight */
-	color: rgba(0,0,0,0.6);
-	font-weight: 400;
-}
-
-/* Remove bold from strong/label in search input area if any */
-.name-parent label strong, .name-parent .field-label strong {
-	font-weight: 500;
-}
-
-/* Ensure label sits above the input (stacked layout) */
-.name-parent .field-label {
-	display: block;
-}
-
-/* Give the input wrapper a small top margin so it appears below the label */
-.name-parent .dd-mm-yyyy-parent {
-	margin-top: 6px;
-}
-
-

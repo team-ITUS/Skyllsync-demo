@@ -1,4 +1,5 @@
 const express = require("express");
+const { authorize } = require('../middleware/authorize');
 const {
   generateLink,
   createBatch,
@@ -28,7 +29,7 @@ const {
 const batchRouter = express.Router();
 
 batchRouter.post('/:batchId/upload-multi-photos', uploadMultiPhotos);
-batchRouter.put('/:batchId/all-complete-profile', allCompleteProfile);
+batchRouter.put('/:batchId/all-complete-profile', authorize('photoBulkAccept'), allCompleteProfile);
 batchRouter.post("/generate", generateLink); // create enrolled students batch
 batchRouter.post("/createBatch", createBatch); // create enrolled students batch
 batchRouter.get("/getAllBatch", getAllBatch); //get all batch details(list)
@@ -36,7 +37,7 @@ batchRouter.get("/getAllBatch", getAllBatch); //get all batch details(list)
 batchRouter.get("/search", searchBatches); // search with query params
 // Also allow root GET to support calls to /batch?courseName=...
 batchRouter.get("/", getAllBatch);
-batchRouter.delete("/deleteBatchById/:batchId", deleteBatchById); //delete batch by batchId
+batchRouter.delete("/deleteBatchById/:batchId", authorize('deleteBatch'), deleteBatchById); //delete batch by batchId
 batchRouter.get("/getBatchById/:batchId", getBatchById); //get single batch by batchId
 batchRouter.put("/updateBatchById/:batchId", updateBatchById); //update batch by batchId
 batchRouter.delete("/removeStudent", removeStudent);//remove student from branch by studentId
@@ -44,7 +45,7 @@ batchRouter.put('/updateComplete/:batchId', updateComplete);//update completeBy 
 batchRouter.put('/compByTrainer/:batchId', compByTrainer);//update completeBy status by batchId by trainer
 batchRouter.get('/checkTComplete/:batchId',checkTComplete); //check complete by trainer or not
 batchRouter.put('/addNewStud',addNewStud);// add new student in existing batch.
-batchRouter.patch('/patchProfileAcception', patchProfileAcception);
+batchRouter.patch('/patchProfileAcception', authorize('photoAcceptReject'), patchProfileAcception);
 batchRouter.get('/getBatchStudentPhotos/:batchId', getBatchStudentPhotos);
 batchRouter.post('/downloadBatchPhotos', downloadBatchPhotos);
 batchRouter.get('/downloadSinglePhoto/:studentId', downloadSinglePhoto);

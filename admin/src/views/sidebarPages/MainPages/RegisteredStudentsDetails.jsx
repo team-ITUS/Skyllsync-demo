@@ -1097,8 +1097,8 @@ const buildSearchFromFilters = (filters, pageVal) => {
 
       <div className='row' style={{ marginBottom: '15px', justifyContent: 'space-between', alignItems: 'center' }}>
 
-        <div className="col-lg-8 d-flex justify-content-between">
-          <div style={{ width: "40%" }}>
+        <div className="col-lg-7 d-flex justify-content-between">
+          <div style={{ width: "35%" }}>
             <InputField
               type="text"
               label="Search By"
@@ -1136,23 +1136,14 @@ const buildSearchFromFilters = (filters, pageVal) => {
           </div>
         </div>
 
-        <div className="col-lg-4 mt-4 d-flex justify-content-end gap-2">
+        <div className="col-lg-5 mt-4 d-flex justify-content-end gap-2">
 
-          <div
-            className="custom-button-parent filter-pill"
-            onClick={() => setShowStudentFilter((s) => !s)}
-            role="button"
-            tabIndex={0}
-            style={{ cursor: 'pointer' }}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setShowStudentFilter((s) => !s) }}
-          >
-            <div className="custom-button ps-2">
-              {showStudentFilter ? 'Hide Filters' : 'Filters'}
-            </div>
-            <div className="custom-icon d-flex align-items-center justify-content-center">
-              <img src="Clone.svg" alt="filters" style={{ width: 12, height: 12 }} />
-            </div>
-          </div>
+          <CustomButton
+            title={showStudentFilter ? 'Hide Filters' : 'Filters'}
+            icon="filter_w.svg"
+            filterPill
+            onClick={() => setShowStudentFilter(s => !s)}
+          />
 
 
           <CustomButton
@@ -1185,8 +1176,8 @@ const buildSearchFromFilters = (filters, pageVal) => {
       </div>
 
       {showStudentFilter && (
-        <div className="row g-3 mb-3 p-3" style={{ background: '#f8f9fc', borderRadius: 8 }}>
-          <div className="col-md-3">
+        <div className="row gx-5 gy-2 mt-3 mx-2 py-3 px-5" style={{ background: '#f8f9fc', borderRadius: 8 }}>
+          <div className="col-md-3" >
             <InputField
               label="Batch Name"
               type="select"
@@ -1241,9 +1232,9 @@ const buildSearchFromFilters = (filters, pageVal) => {
               onChange={(val) => setStudentFilter((p) => ({ ...p, endDate: val }))}
             />
           </div>
-          <div className="col-md-6 d-flex justify-content-end align-items-end gap-2">
-            <CustomButton title="Clear" variant="outline" icon="crossmark.svg" onClick={handleClearStudentFilter} />
+          <div className="col-md-6 d-flex justify-content-end align-items-end gap-2 mb-1">
             <CustomButton title="Apply" icon="Check.svg" onClick={handleApplyStudentFilter} />
+            <CustomButton title="Clear" variant="outline" icon="wrong2.svg" onClick={handleClearStudentFilter} />
           </div>
         </div>
       )}
@@ -1476,7 +1467,7 @@ const buildSearchFromFilters = (filters, pageVal) => {
                         <img
                           src={`${BASE_URL}/${studentData.imagePath}`}
                           alt="Profile"
-                          style={{ width: '40px', height: '40px', marginRight: '10px', cursor: 'pointer' }}
+                          style={{ width: 'auto', height: '120px', marginRight: '10px', cursor: 'pointer' }}
                           onClick={() => handleImageClick(`${BASE_URL}/${studentData.imagePath}`)}
                         />
                       )}
@@ -1501,7 +1492,7 @@ const buildSearchFromFilters = (filters, pageVal) => {
                         <img
                           src={`${BASE_URL}/${studentData.adhaarImage}`}
                           alt="Aadhaar Card"
-                          style={{ width: '40px', height: '40px', marginRight: '10px', cursor: 'pointer' }}
+                          style={{ width: 'auto', height: '120px', marginRight: '10px', cursor: 'pointer' }}
                           onClick={() => handleImageClick(`${BASE_URL}/${studentData.adhaarImage}`)}
                         />
                       )}
@@ -1529,17 +1520,25 @@ const buildSearchFromFilters = (filters, pageVal) => {
                             ? b
                             : (b && (b.batchName || b.name || b.batch || b.batchTitle)) || '';
                           const key = (b && (b._id || b.batchId)) || idx;
+                          const clickable = name && (b && (b._id || b.batchId))
                           return (
-                            <div
+                            <span
                               key={key}
-                              style={{ marginBottom: 6, cursor: name ? 'pointer' : 'default' }}
-                              role={name ? 'button' : undefined}
-                              tabIndex={name ? 0 : undefined}
-                              onClick={() => { if (name && (b && (b._id || b.batchId))) handleOpenBatch(b._id || b.batchId) }}
-                              onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && name && (b && (b._id || b.batchId))) handleOpenBatch(b._id || b.batchId) }}
+                              className="badge me-2 mb-2 batch-badge"
+                              style={{
+                                cursor: clickable ? 'pointer' : 'default',
+                                fontSize: '12px',
+                                letterSpacing: '.2px',
+                                backgroundColor: clickable ? '#1F3F89' : '#6c757d',
+                                color: '#fff'
+                              }}
+                              role={clickable ? 'button' : undefined}
+                              tabIndex={clickable ? 0 : undefined}
+                              onClick={() => { if (clickable) handleOpenBatch(b._id || b.batchId) }}
+                              onKeyDown={(e) => { if (clickable && (e.key === 'Enter' || e.key === ' ')) handleOpenBatch(b._id || b.batchId) }}
                             >
-                              <strong style={{ textDecoration: name ? 'underline' : 'none' }}>{name}</strong>
-                            </div>
+                              {name || 'Unnamed'}
+                            </span>
                           )
                         })
                       ) : (

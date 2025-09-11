@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const { connectDB } = require('./db');
+const { seedDefaultRoles, seedStaffAdmin } = require('./services/seedRoles');
 
 dotenv.config();
 
@@ -28,7 +29,9 @@ const {otpRouter} = require('./routes/otpRouter');
 const {waCredRouter} = require('./routes/waCredRouter');
 const {licenseRouter} = require('./routes/licenseRouter');
 //set env configuration
-connectDB();
+connectDB().then(async () => {
+  try { await seedDefaultRoles(); await seedStaffAdmin(); } catch (e) { console.warn('Seeding roles/restricted admin failed:', e?.message); }
+});
 
 
 //set middleware
