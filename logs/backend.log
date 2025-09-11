@@ -5236,3 +5236,11 @@
 [2025-09-11T06:49:57.158Z] [INFO] [logger.js:38] [Mongo] Connected
 [2025-09-11T06:50:39.770Z] [INFO] [logger.js:38] [Mongo] Attempting connection...
 [2025-09-11T06:50:40.145Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-11T08:49:40.313Z] [WARN] [logger.js:30] [commonLogIn] Admin login failed: | "Admin not exist"
+[2025-09-11T08:49:40.336Z] [WARN] [logger.js:30] [commonLogIn] Accessor login failed: | "Invalid email. Please provide valid email"
+[2025-09-11T10:56:37.006Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-11T10:56:37.007Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-11T10:56:37.009Z] [INFO] [logger.js:38] [Mongo] Reconnected
+[2025-09-11T11:09:09.058Z] [WARN] [logger.js:30] [Mongo] Disconnected
+[2025-09-11T11:09:09.059Z] [INFO] [logger.js:38] [Mongo] Connected
+[2025-09-11T11:09:09.059Z] [INFO] [logger.js:38] [Mongo] Reconnected

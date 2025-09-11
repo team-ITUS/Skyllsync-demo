@@ -578,27 +578,34 @@ const BatchDetails = () => {
   // Get batch details
   const getBatchDtl = async (currentPage) => {
     try {
-      // Build params and omit empty/null so backend treats as unfiltered
-      const params = { page: currentPage, limit, role, uuid }
-      if (searchName && String(searchName).trim()) params.searchName = String(searchName).trim()
-      if (dateFrom) params.dateFrom = dateFrom
-      if (dateTo) params.dateTo = dateTo
-      const response = await axios.get(`${BASE_URL}/batch`, { params })
-      const respData = response.data
+      let respData;
+      if (role === 'trainer') {
+        // For trainers, fetch all batches (not just assigned)
+        const resp = await axios.get(`${BASE_URL}/batch/getAllBatch`, { params: { page: currentPage, limit } });
+        respData = { success: true, allBatchDtl: resp?.data?.allBatchDtl || [], totalPages: 1 };
+      } else {
+        // For admin and others, use the filtered endpoint
+        const params = { page: currentPage, limit, role, uuid };
+        if (searchName && String(searchName).trim()) params.searchName = String(searchName).trim();
+        if (dateFrom) params.dateFrom = dateFrom;
+        if (dateTo) params.dateTo = dateTo;
+        const response = await axios.get(`${BASE_URL}/batch`, { params });
+        respData = response.data;
+      }
 
       if (respData?.success) {
-        setBatch(respData?.allBatchDtl)
-        setAllBatches(respData?.allBatchDtl || [])
-        setTotalPages(respData?.totalPages)
-        return respData?.allBatchDtl || []
+        setBatch(respData?.allBatchDtl);
+        setAllBatches(respData?.allBatchDtl || []);
+        setTotalPages(respData?.totalPages);
+        return respData?.allBatchDtl || [];
       } else {
-        toast.error(respData.message || 'No batch available')
-        return []
+        toast.error(respData.message || 'No batch available');
+        return [];
       }
     } catch (error) {
-      setBatch([])
-      setTotalPages(1)
-      return []
+      setBatch([]);
+      setTotalPages(1);
+      return [];
     }
   }
 
