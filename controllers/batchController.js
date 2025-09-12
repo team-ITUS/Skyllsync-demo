@@ -514,13 +514,13 @@ const removeStudent = async (req, res) => {
         .json({ message: "Batch not exist", success: false });
     }
 
-    //check batch is completed or not
-    if (isBatchPresent?.byAdmin === "Completed") {
-      return res.status(400).json({
-        message: "Batch is completed by admin. Cannot remove.",
-        success: false,
-      });
-    }
+    // //check batch is completed or not
+    // if (isBatchPresent?.byAdmin === "Completed") {
+    //   return res.status(400).json({
+    //     message: "Batch is completed by admin. Cannot remove.",
+    //     success: false,
+    //   });
+    // }
 
     //remove student from batch
     const updatedBatch = await BatchModel.findOneAndUpdate(
